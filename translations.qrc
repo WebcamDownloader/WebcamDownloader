@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/translations">
+        <file>WebcamDownloader_en_US.qm</file>
+    </qresource>
+</RCC>
