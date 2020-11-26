@@ -4,7 +4,7 @@
 WebcamRegistry::WebcamRegistry(QObject *parent) : QObject(parent)
 {
     webcamHosts.append(new StripchatHost(this));
-    webcamHosts.append(new ChaturbateHost(this));
+    //webcamHosts.append(new ChaturbateHost(this));
 
     Worker *worker = new Worker();
     worker->moveToThread(&workerThread);
@@ -84,9 +84,9 @@ void WebcamRegistry::openDownloads()
     QDesktopServices::openUrl("file:///" + QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 }
 
-void WebcamRegistry::startDownload(QVariantMap webcamInfo)
+void WebcamRegistry::startDownload(QVariantMap webcamInfo, QString directory)
 {
-    ffmpeg->startDownload(webcamInfo);
+    ffmpeg->startDownload(webcamInfo, directory);
 }
 
 void WebcamRegistry::stopDownload(QString host, QString modelName)

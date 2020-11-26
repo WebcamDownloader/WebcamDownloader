@@ -1,7 +1,8 @@
 #include "ffmpeg.h"
 #include <QDebug>
 
-Ffmpeg::Ffmpeg(QObject *parent) : QObject(parent)
+Ffmpeg::Ffmpeg(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -10,7 +11,7 @@ Ffmpeg::~Ffmpeg()
     stopAllDownloads();
 }
 
-void Ffmpeg::startDownload(WebcamInfo webcamInfo)
+void Ffmpeg::startDownload(WebcamInfo webcamInfo, QString directory)
 {
     if (hasDownload(webcamInfo)) {
         return;
@@ -19,7 +20,7 @@ void Ffmpeg::startDownload(WebcamInfo webcamInfo)
     QString modelName = webcamInfo.modelName();
 
     QDateTime datetime = QDateTime::currentDateTime();
-    QString outPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)
+    QString outPath = directory
             + "/" + modelName
             + "-" + datetime.toString("yyyy_MM_dd-hh_mm_ss")
             + ".ts";

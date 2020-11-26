@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
     qRegisterMetaType<WebcamInfo>("WebcamInfo");
+    app.setOrganizationName("WebcamDownloader");
+    app.setOrganizationDomain("WebcamDownloader");
 
     QTranslator translator;
     if (!translator.load("WebcamDownloader_" + QLocale::system().name(), ":/translations")) {
@@ -29,7 +31,7 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     qmlRegisterType<WebcamRegistry>("webcam.downloader", 1, 0, "WebcamRegistry");
-    engine.rootContext()->setContextProperty("settings", new Settings(&app));
+    engine.rootContext()->setContextProperty("settings", new Settings(false, &app));
     engine.load(url);
 
     return app.exec();

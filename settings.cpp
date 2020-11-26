@@ -1,8 +1,14 @@
 #include "settings.h"
 
 Settings::Settings(QObject *parent)
+    : Settings(true, parent)
+{
+}
+
+Settings::Settings(bool readOnly, QObject *parent)
     : QObject(parent),
-      settings(QCoreApplication::applicationDirPath() + "/options.ini", QSettings::IniFormat, this)
+      settings(QCoreApplication::applicationDirPath() + "/options.ini", QSettings::IniFormat, this),
+      isReadOnly(readOnly)
 {
 }
 
@@ -43,6 +49,9 @@ QVariantMap Settings::getModels()
 
 void Settings::setModelData(QString host, QString modelName, bool autoDownload)
 {
+    if (isReadOnly) {
+        return;
+    }
     settings.beginGroup("models_" + host);
     settings.beginGroup(modelName);
     settings.setValue("modelName", modelName);
@@ -76,6 +85,9 @@ QVariantMap Settings::getModelData(QString host, QString modelName)
 
 void Settings::deleteModel(QString host, QString modelName)
 {
+    if (isReadOnly) {
+        return;
+    }
     settings.beginGroup("models_" + host);
     settings.remove(modelName);
     settings.endGroup();
@@ -101,6 +113,9 @@ int Settings::getWindowHeight()
 
 void Settings::setWindowWidth(int width)
 {
+    if (isReadOnly) {
+        return;
+    }
     settings.beginGroup("app_settings");
     settings.setValue("window_width", width);
     settings.endGroup();
@@ -108,6 +123,9 @@ void Settings::setWindowWidth(int width)
 
 void Settings::setWindowHeight(int height)
 {
+    if (isReadOnly) {
+        return;
+    }
     settings.beginGroup("app_settings");
     settings.setValue("window_height", height);
     settings.endGroup();
@@ -123,9 +141,36 @@ bool Settings::closeToTray()
 
 void Settings::setCloseToTray(bool minimize)
 {
+    if (isReadOnly) {
+        return;
+    }
     settings.beginGroup("app_settings");
     settings.setValue("minimize_to_tray", minimize);
     settings.endGroup();
+}
+
+QString Settings::downloadDirectory()
+{
+    settings.beginGroup("app_settings");
+    QString directory = settings.value("directory", QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).toString();
+    settings.endGroup();
+    return directory;
+}
+
+void Settings::setDownloadDirectory(QString directory)
+{
+    if (isReadOnly) {
+        return;
+    }
+    if (directory.startsWith("file:///")) {
+        directory.remove(0, QString("file:///").count());
+    }
+    if (directory != downloadDirectory()) {
+        settings.beginGroup("app_settings");
+        settings.setValue("directory", directory);
+        settings.endGroup();
+        emit downloadDirectoryChanged();
+    }
 }
 
 bool Settings::autoDownloadsEnabled()
@@ -138,6 +183,9 @@ bool Settings::autoDownloadsEnabled()
 
 void Settings::setAutoDownloadsEnabled(bool enabled)
 {
+    if (isReadOnly) {
+        return;
+    }
     if (enabled != autoDownloadsEnabled()) {
         settings.beginGroup("app_settings");
         settings.setValue("auto_downloads_enabled", enabled);

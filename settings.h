@@ -14,15 +14,21 @@ class Settings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool autoDownloadsEnabled READ autoDownloadsEnabled WRITE setAutoDownloadsEnabled NOTIFY autoDownloadsEnabledChanged)
+    Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory NOTIFY downloadDirectoryChanged)
 public:
     explicit Settings(QObject *parent = nullptr);
+    explicit Settings(bool readOnly, QObject *parent = nullptr);
 
     bool autoDownloadsEnabled();
     void setAutoDownloadsEnabled(bool enabled);
 
+    QString downloadDirectory();
+    void setDownloadDirectory(QString directory);
+
 signals:
     void modelsUpdated();
     void autoDownloadsEnabledChanged();
+    void downloadDirectoryChanged();
 
 public slots:
     QVariantList getModels(QString host);
@@ -43,6 +49,7 @@ public slots:
 private:
     QSettings settings;
     WebcamRegistry webcamRegistry;
+    const bool isReadOnly;
 };
 
 #endif // SETTINGS_H

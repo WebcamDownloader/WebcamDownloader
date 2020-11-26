@@ -38,7 +38,7 @@ public slots:
     void fetchInfo(QString host, QString modelNameOrUrl);
     void handleInfoResult(WebcamInfo webcamInfo);
     void openDownloads();
-    void startDownload(QVariantMap webcamInfo);
+    void startDownload(QVariantMap webcamInfo, QString directory);
     void stopDownload(QString host, QString modelName);
     void stopAllDownloads();
     QString getFriendlyName(QString host);

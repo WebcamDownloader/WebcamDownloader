@@ -1,9 +1,12 @@
 import Qt.labs.platform 1.1 as Labs
+import Qt.labs.qmlmodels 1.0
+
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import Qt.labs.qmlmodels 1.0
+import QtQuick.Dialogs 1.3
+
 import webcam.downloader 1.0
 
 ApplicationWindow {
@@ -94,6 +97,37 @@ ApplicationWindow {
                         }
                     }
                 }
+                Row {
+                    spacing: parent.spacing
+                    Label {
+                        text: qsTr('option-download-directory')
+                        height: optionCloseToTray.height
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    TextField {
+                        function setDownloadDirectory(dir) {
+                            settings.downloadDirectory = dir;
+                        }
+
+                        id: optionDownloadDirectory
+                        enabled: false
+                        text: settings.downloadDirectory
+                    }
+                    Button {
+                        text: qsTr('button-browse-files')
+                        onClicked: {
+                            chooseDownloadDirectoryDialog.open();
+                        }
+                    }
+                    FileDialog {
+                        id: chooseDownloadDirectoryDialog
+                        folder: "file:///" + optionDownloadDirectory.text
+                        selectFolder: true
+                        onAccepted: {
+                            optionDownloadDirectory.setDownloadDirectory(fileUrl)
+                        }
+                    }
+                }
             }
         }
     }
@@ -112,7 +146,7 @@ ApplicationWindow {
                 && settings.getModelData(result.host, result.modelName).autoDownload
                 && settings.autoDownloadsEnabled
             ) {
-                registry.startDownload(result);
+                registry.startDownload(result, settings.downloadDirectory);
                 if (typeof autodownloading[result.host] === 'undefined') {
                     autodownloading[result.host] = {};
                 }
@@ -405,7 +439,7 @@ ApplicationWindow {
                                 downloaded => !(downloaded.host === item.host && downloaded.modelName === item.modelName)
                             );
                             if (item.download) {
-                                registry.startDownload(webcamConfig[item.host][item.modelName]);
+                                registry.startDownload(webcamConfig[item.host][item.modelName], settings.downloadDirectory);
                                 downloading.push(item);
                             } else {
                                 registry.stopDownload(item.host, item.modelName);

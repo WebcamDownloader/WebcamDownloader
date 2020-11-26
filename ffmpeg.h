@@ -17,7 +17,7 @@ class Ffmpeg : public QObject
 public:
     explicit Ffmpeg(QObject *parent = nullptr);
     ~Ffmpeg();
-    void startDownload(WebcamInfo webcamInfo);
+    void startDownload(WebcamInfo webcamInfo, QString directory);
     void stopAllDownloads();
     void stopDownload(WebcamInfo info);
     void stopDownload(QString host, QString modelName);
