@@ -15,6 +15,11 @@ WebcamInfo::WebcamInfo(
 {
 }
 
+WebcamInfo::WebcamInfo()
+    : WebcamInfo("", "", false, QUrl(), true)
+{
+}
+
 WebcamInfo::WebcamInfo(QVariantMap map)
     : WebcamInfo(
           map.value("host").toString(),
