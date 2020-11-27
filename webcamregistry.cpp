@@ -79,9 +79,9 @@ void WebcamRegistry::handleInfoResult(WebcamInfo webcamInfo)
     emit results(webcamInfo.toMap());
 }
 
-void WebcamRegistry::openDownloads()
+void WebcamRegistry::openDirectory(QString directory)
 {
-    QDesktopServices::openUrl("file:///" + QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+    QDesktopServices::openUrl("file:///" + directory);
 }
 
 void WebcamRegistry::startDownload(QVariantMap webcamInfo, QString directory)

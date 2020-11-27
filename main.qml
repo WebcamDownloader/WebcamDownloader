@@ -476,7 +476,7 @@ ApplicationWindow {
                     id: openDownloadsDirButton
                     text: qsTr('button-open-downloads')
                     onClicked: {
-                        registry.openDownloads();
+                        registry.openDirectory(settings.downloadDirectory);
                     }
                 }
             }
