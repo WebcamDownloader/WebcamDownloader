@@ -14,6 +14,7 @@ If you use the zipped version, unzip the downloaded file, open WebcamDownloader 
 
 - Downloads from these websites:
   - Stripchat.com
+  - Chaturbate.com
 - Automatic downloading
 - Downloading multiple streams at once
 - Can be configured to close into system tray, useful in combination with automatic downloading
