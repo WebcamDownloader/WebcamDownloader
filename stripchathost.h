@@ -3,7 +3,6 @@
 
 #include "webcamhost.h"
 #include "webcaminfo.h"
-#include "useragentgenerator.h"
 
 #include <QRegularExpression>
 #include <QNetworkAccessManager>
@@ -21,8 +20,6 @@ public:
     QString getName() override;
     QString getCodeName() override;
     WebcamInfo getModelInfo(QString urlOrName) override;
-private:
-    UserAgentGenerator userAgentGenerator;
 };
 
 #endif // STRIPCHATHOST_H

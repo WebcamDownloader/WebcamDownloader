@@ -1,6 +1,14 @@
 #ifndef CHATURBATEHOST_H
 #define CHATURBATEHOST_H
 
+#include <QEventLoop>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrl>
+#include <QRegExp>
+#include <QRegularExpression>
+
 #include "webcamhost.h"
 
 class ChaturbateHost : public WebcamHost

@@ -45,6 +45,10 @@ void Ffmpeg::startDownload(WebcamInfo webcamInfo, QString directory)
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this, host, modelName]() {
         emit downloadEnded(host, modelName);
     });
+    connect(process, &QProcess::errorOccurred, this, [process](QProcess::ProcessError error) {
+        qDebug() << error;
+        qDebug() << process->errorString();
+    });
     process->start();
     processes.insert(webcamInfo, process);
 }

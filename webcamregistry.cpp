@@ -4,7 +4,7 @@
 WebcamRegistry::WebcamRegistry(QObject *parent) : QObject(parent)
 {
     webcamHosts.append(new StripchatHost(this));
-    //webcamHosts.append(new ChaturbateHost(this));
+    webcamHosts.append(new ChaturbateHost(this));
 
     Worker *worker = new Worker();
     worker->moveToThread(&workerThread);

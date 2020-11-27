@@ -10,6 +10,7 @@ class WebcamInfo
 public:
     explicit WebcamInfo(QString host, QString modelName, bool isOnline, QUrl streamUrl, bool error);
     WebcamInfo();
+    WebcamInfo(QString host, QString modelName);
     WebcamInfo(QVariantMap map);
 
     QVariantMap toMap();
