@@ -47,6 +47,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+          body: Download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below
       - name: Upload Setup
         uses: actions/upload-release-asset@v1
         env:
