@@ -11,7 +11,7 @@ import webcam.downloader 1.0
 
 ApplicationWindow {
     property var webcamConfig: ({})
-    property var autodownloading: ({})
+    property var downloading: ({})
     id: window
     visible: true
     width: settings.getWindowWidth()
@@ -147,23 +147,22 @@ ApplicationWindow {
                 && settings.autoDownloadsEnabled
             ) {
                 registry.startDownload(result, settings.downloadDirectory);
-                if (typeof autodownloading[result.host] === 'undefined') {
-                    autodownloading[result.host] = {};
-                }
-                autodownloading[result.host][result.modelName] = true;
-            } else if(
-                typeof autodownloading[result.host] !== 'undefined'
-                && typeof autodownloading[result.host][result.modelName] !== 'undefined'
-            ) {
-                autodownloading[result.host][result.modelName] = undefined;
             }
         }
         onFetchingInfoFailed: {
             modelNotFound.opacity = 1;
         }
         onDownloadStarted: {
+            if (typeof downloading[host] === 'undefined') {
+                downloading[host] = {};
+            }
+            downloading[host][modelName] = true;
         }
         onDownloadEnded: {
+            if (typeof downloading[host] === 'undefined') {
+                downloading[host] = {};
+            }
+            downloading[host][modelName] = undefined;
         }
     }
 
@@ -377,15 +376,9 @@ ApplicationWindow {
                                 interval: 1000
                                 running: true
                                 onTriggered: {
-                                    const downloading = startDownloadsButton.downloading.filter(downloaded => {
-                                        return downloaded.host === modelData.host && downloaded.modelName === modelData.modelName;
-                                    });
                                     if (
-                                        downloading.length === 1
-                                        || (
-                                                typeof autodownloading[modelData.host] !== 'undefined'
-                                                && typeof autodownloading[modelData.host][modelData.modelName] !== 'undefined'
-                                        )
+                                      typeof downloading[modelData.host] !== 'undefined'
+                                      && typeof downloading[modelData.host][modelData.modelName] !== 'undefined'
                                     ) {
                                         status.text = qsTr('status-downloading');
                                         downloadCheckbox.isOnline = true;
@@ -422,7 +415,6 @@ ApplicationWindow {
 
                 Button {
                     property var changed: []
-                    property var downloading: []
 
                     id: startDownloadsButton
                     text: qsTr("button-start-downloads")
@@ -435,12 +427,8 @@ ApplicationWindow {
                             }
 
                             const item = changed[key];
-                            downloading = downloading.filter(
-                                downloaded => !(downloaded.host === item.host && downloaded.modelName === item.modelName)
-                            );
                             if (item.download) {
                                 registry.startDownload(webcamConfig[item.host][item.modelName], settings.downloadDirectory);
-                                downloading.push(item);
                             } else {
                                 registry.stopDownload(item.host, item.modelName);
                             }
@@ -453,12 +441,20 @@ ApplicationWindow {
                     text: qsTr("button-stop-all-downloads");
                     width: openDownloadsDirButton.width
                     onClicked: {
+                        startDownloadsButton.enabled = true;
+                        const changed = [];
+                        for (const host in downloading) {
+                            if (!downloading.hasOwnProperty(host)) {
+                                continue;
+                            }
+                            const models = Object.keys(downloading[host]);
+                            for (const modelName of models) {
+                                changed.push({host, modelName, download: true});
+                            }
+                        }
+                        startDownloadsButton.changed = changed;
                         registry.stopAllDownloads();
                         settings.autoDownloadsEnabled = false;
-                        autodownloading = {};
-                        startDownloadsButton.enabled = true;
-                        startDownloadsButton.changed = startDownloadsButton.downloading;
-                        startDownloadsButton.downloading = [];
                     }
                 }
 
