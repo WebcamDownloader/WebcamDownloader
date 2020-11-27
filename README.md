@@ -2,11 +2,13 @@
 
 ## Download
 
-Go to the [latest release](https://github.com/WebcamDownloader/WebcamDownloader/releases/latest) and download the zip file.
+Go to the [latest release](https://github.com/WebcamDownloader/WebcamDownloader/releases/latest) and download the zip or setup file.
 
-## Using
+## Installing
 
-Unzip the downloaded file, open WebcamDownloader folder and double click the WebcamDownloader application.
+If you use the installer, just install it and open the app from your Start menu.
+
+If you use the zipped version, unzip the downloaded file, open WebcamDownloader folder and double click the WebcamDownloader application.
 
 ## Features
 
