@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Webcam Downloader"
-#define MyAppVersion "0.2.0"
+#define MyAppVersion "0.2.1"
 #define MyAppPublisher "Webcam Downloader"
 #define MyAppURL "https://github.com/WebcamDownloader/WebcamDownloader"
 #define MyAppExeName "WebcamDownloader.exe"
