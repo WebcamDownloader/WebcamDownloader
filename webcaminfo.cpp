@@ -68,6 +68,11 @@ QUrl WebcamInfo::streamUrl()
     return mStreamUrl;
 }
 
+bool WebcamInfo::error()
+{
+    return mError;
+}
+
 bool WebcamInfo::operator>(const WebcamInfo &right) const
 {
     return mModelName > right.mModelName;

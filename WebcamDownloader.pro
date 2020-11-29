@@ -1,6 +1,6 @@
 QT += quick network quickcontrols2
 
-CONFIG += c++11
+CONFIG += c++17 console
 
 RC_ICONS = icon.ico
 
@@ -17,6 +17,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         chaturbatehost.cpp \
+        console/addmodelcommand.cpp \
+        console/command.cpp \
+        console/console.cpp \
+        console/helpcommand.cpp \
+        console/listhostscommand.cpp \
+        console/listmodelscommand.cpp \
+        console/removemodelcommand.cpp \
         ffmpeg.cpp \
         main.cpp \
         modelsetting.cpp \
@@ -45,6 +52,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     chaturbatehost.h \
+    console/addmodelcommand.h \
+    console/command.h \
+    console/console.h \
+    console/helpcommand.h \
+    console/listhostscommand.h \
+    console/listmodelscommand.h \
+    console/removemodelcommand.h \
     ffmpeg.h \
     modelsetting.h \
     settings.h \

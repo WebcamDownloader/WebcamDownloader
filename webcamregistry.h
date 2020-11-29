@@ -25,6 +25,7 @@ public:
     QVariantMap getTypes();
     QString host();
     void setHost(QString host);
+    WebcamHost* getHost(QString hostname);
 signals:
     void hostChanged();
     void fetchingInfoFailed();
@@ -46,7 +47,6 @@ public slots:
 private:
     QList<WebcamHost*> webcamHosts;
     WebcamHost* current();
-    WebcamHost* getHost(QString hostname);
     QString currentHostName;
     QThread workerThread;
     Ffmpeg* ffmpeg = new Ffmpeg(this);

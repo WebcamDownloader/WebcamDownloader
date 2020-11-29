@@ -1,5 +1,4 @@
 #include "webcamregistry.h"
-#include <QDebug>
 
 WebcamRegistry::WebcamRegistry(QObject *parent) : QObject(parent)
 {

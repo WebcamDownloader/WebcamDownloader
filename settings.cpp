@@ -64,6 +64,9 @@ void Settings::setModelData(QString host, QString modelName, bool autoDownload)
 
 void Settings::setModelData(QString host, QString modelName)
 {
+    if (isReadOnly) {
+        return;
+    }
     auto data = getModelData(host, modelName);
     setModelData(host, modelName, data.value("autoDownload").toBool());
 }

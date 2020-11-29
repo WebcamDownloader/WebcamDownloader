@@ -1,5 +1,4 @@
 #include "worker.h"
-#include <QDebug>
 
 Worker::Worker(QObject *parent) : QObject(parent)
 {

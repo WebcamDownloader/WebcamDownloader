@@ -18,6 +18,7 @@ public:
     QString modelName();
     QString host();
     QUrl streamUrl();
+    bool error();
 
     bool operator>(const WebcamInfo& right) const;
     bool operator<(const WebcamInfo& right) const;

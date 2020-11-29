@@ -1,5 +1,4 @@
 #include "stripchathost.h"
-#include <QDebug>
 
 StripchatHost::StripchatHost(QObject *parent) : WebcamHost(parent)
 {

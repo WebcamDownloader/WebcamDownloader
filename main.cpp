@@ -1,3 +1,6 @@
+#ifdef __WIN32
+#include "windows.h"
+#endif
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QTranslator>
@@ -8,8 +11,25 @@
 #include "webcaminfo.h"
 #include "settings.h"
 
+#include "console/console.h"
+
 int main(int argc, char *argv[])
 {
+    constexpr bool debugCli = false;
+
+    if (argc > 1 || debugCli) {
+        QCoreApplication app(argc, argv);
+        Console console;
+        if (debugCli) {
+            return console.handler(app.arguments() << "help");
+        }
+        return console.handler(&app);
+    } else {
+#ifdef __WIN32
+    ShowWindow(GetConsoleWindow(), SW_HIDE);
+#endif
+    }
+
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
