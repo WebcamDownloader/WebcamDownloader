@@ -27,6 +27,7 @@ SOURCES += \
         ffmpeg.cpp \
         main.cpp \
         modelsetting.cpp \
+        newversionchecker.cpp \
         settings.cpp \
         stripchathost.cpp \
         useragentgenerator.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     console/removemodelcommand.h \
     ffmpeg.h \
     modelsetting.h \
+    newversionchecker.h \
     settings.h \
     stripchathost.h \
     useragentgenerator.h \

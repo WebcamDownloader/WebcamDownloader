@@ -15,6 +15,7 @@ class Settings : public QObject
     Q_OBJECT
     Q_PROPERTY(bool autoDownloadsEnabled READ autoDownloadsEnabled WRITE setAutoDownloadsEnabled NOTIFY autoDownloadsEnabledChanged)
     Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory NOTIFY downloadDirectoryChanged)
+    Q_PROPERTY(bool checkForNewVersions READ checkForNewVersions WRITE setCheckForNewVersions NOTIFY checkForNewVersionsChanged)
 public:
     explicit Settings(QObject *parent = nullptr);
     explicit Settings(bool readOnly, QObject *parent = nullptr);
@@ -25,10 +26,14 @@ public:
     QString downloadDirectory();
     void setDownloadDirectory(QString directory);
 
+    bool checkForNewVersions();
+    void setCheckForNewVersions(bool check);
+
 signals:
     void modelsUpdated();
     void autoDownloadsEnabledChanged();
     void downloadDirectoryChanged();
+    void checkForNewVersionsChanged();
 
 public slots:
     QVariantList getModels(QString host);

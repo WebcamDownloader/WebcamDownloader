@@ -5,7 +5,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
+import QtQuick.Dialogs 1.3 as Dialogs
 
 import webcam.downloader 1.0
 
@@ -100,6 +100,35 @@ ApplicationWindow {
                 Row {
                     spacing: parent.spacing
                     Label {
+                        text: qsTr('option-check-for-new-versions')
+                        height: optionCloseToTray.height
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    ComboBox {
+                        id: optionCheckForNewVersions
+                        model: [{text: qsTr('yes'), value: true}, {text: qsTr('no'), value: false}]
+                        textRole: "text"
+                        valueRole: "value"
+                        currentIndex: {
+                            const val = settings.checkForNewVersions;
+                            let index = 0;
+                            for (const option of model) {
+                                if (option.value === val) {
+                                    return index;
+                                }
+
+                                ++index;
+                            }
+                            return -1;
+                        }
+                        onActivated: {
+                            settings.checkForNewVersions = currentValue;
+                        }
+                    }
+                }
+                Row {
+                    spacing: parent.spacing
+                    Label {
                         text: qsTr('option-download-directory')
                         height: optionCloseToTray.height
                         verticalAlignment: Text.AlignVCenter
@@ -119,7 +148,7 @@ ApplicationWindow {
                             chooseDownloadDirectoryDialog.open();
                         }
                     }
-                    FileDialog {
+                    Dialogs.FileDialog {
                         id: chooseDownloadDirectoryDialog
                         folder: "file:///" + optionDownloadDirectory.text
                         selectFolder: true
@@ -166,6 +195,14 @@ ApplicationWindow {
         }
     }
 
+    NewVersionChecker {
+        id: newVersionChecker
+        onNewVersionFound: {
+            newVersionFoundDialog.version = version;
+            newVersionFoundDialog.open();
+        }
+    }
+
     Connections {
         target: settings
         function onModelsUpdated() {
@@ -184,6 +221,22 @@ ApplicationWindow {
                 }
             }
             table.model = models;
+        }
+    }
+
+    Dialog {
+        property string version: ''
+        id: newVersionFoundDialog
+        anchors.centerIn: parent
+        title: qsTr("title-new-version-found")
+        modal: true
+        standardButtons: Dialog.Yes | Dialog.No
+        onAccepted: {
+            registry.openUrl("https://github.com/WebcamDownloader/WebcamDownloader/releases/latest");
+        }
+
+        Label {
+            text: qsTr("text-new-version-found").arg(newVersionFoundDialog.version)
         }
     }
 
@@ -544,5 +597,8 @@ ApplicationWindow {
         selectHost.model = model;
         settings.modelsUpdated();
         updateStatuses();
+        if (settings.checkForNewVersions) {
+            newVersionChecker.checkForNewVersion();
+        }
     }
 }

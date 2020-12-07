@@ -9,12 +9,12 @@
         <translation>Webcam Downloader</translation>
     </message>
     <message>
-        <location filename="main.qml" line="227"/>
+        <location filename="main.qml" line="279"/>
         <source>error-model-not-found</source>
         <translation>Model with that name was not found</translation>
     </message>
     <message>
-        <location filename="main.qml" line="211"/>
+        <location filename="main.qml" line="263"/>
         <source>placeholder-model-name</source>
         <translation>Model name or URL</translation>
     </message>
@@ -31,88 +31,105 @@
     </message>
     <message>
         <location filename="main.qml" line="80"/>
+        <location filename="main.qml" line="109"/>
         <source>yes</source>
         <translation>Yes</translation>
     </message>
     <message>
         <location filename="main.qml" line="80"/>
+        <location filename="main.qml" line="109"/>
         <source>no</source>
         <translation>No</translation>
     </message>
     <message>
         <location filename="main.qml" line="103"/>
+        <source>option-check-for-new-versions</source>
+        <translation>Check for new versions?</translation>
+    </message>
+    <message>
+        <location filename="main.qml" line="132"/>
         <source>option-download-directory</source>
         <translation>Downloads Folder</translation>
     </message>
     <message>
-        <location filename="main.qml" line="117"/>
+        <location filename="main.qml" line="146"/>
         <source>button-browse-files</source>
         <translation>Browse</translation>
     </message>
     <message>
-        <location filename="main.qml" line="216"/>
+        <location filename="main.qml" line="231"/>
+        <source>title-new-version-found</source>
+        <translation>New Version Found!</translation>
+    </message>
+    <message>
+        <location filename="main.qml" line="239"/>
+        <source>text-new-version-found</source>
+        <translation>New version (%1) found, do you want to download it now?</translation>
+    </message>
+    <message>
+        <location filename="main.qml" line="268"/>
         <source>fetch-info-button-text</source>
         <translation>Add</translation>
     </message>
     <message>
-        <location filename="main.qml" line="239"/>
+        <location filename="main.qml" line="291"/>
         <source>label-models</source>
         <translation>Saved models</translation>
     </message>
     <message>
-        <location filename="main.qml" line="262"/>
+        <location filename="main.qml" line="314"/>
         <source>table-header-model-name</source>
         <translation>Model name</translation>
     </message>
     <message>
-        <location filename="main.qml" line="268"/>
+        <location filename="main.qml" line="320"/>
         <source>table-header-friendly-hostname</source>
         <translation>Website</translation>
     </message>
     <message>
-        <location filename="main.qml" line="274"/>
+        <location filename="main.qml" line="326"/>
         <source>table-header-status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="main.qml" line="280"/>
+        <location filename="main.qml" line="332"/>
         <source>table-header-download</source>
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="main.qml" line="287"/>
+        <location filename="main.qml" line="339"/>
         <source>table-header-auto-download</source>
         <translation>Auto Download</translation>
     </message>
     <message>
-        <location filename="main.qml" line="294"/>
-        <location filename="main.qml" line="363"/>
+        <location filename="main.qml" line="346"/>
+        <location filename="main.qml" line="415"/>
         <source>table-header-delete</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="main.qml" line="390"/>
+        <location filename="main.qml" line="436"/>
         <source>status-downloading</source>
         <translation>Downloading</translation>
     </message>
     <message>
-        <location filename="main.qml" line="397"/>
+        <location filename="main.qml" line="443"/>
         <source>status-online</source>
         <translation>Online</translation>
     </message>
     <message>
-        <location filename="main.qml" line="400"/>
+        <location filename="main.qml" line="446"/>
         <source>status-offline</source>
         <translation>Offline</translation>
     </message>
     <message>
-        <location filename="main.qml" line="477"/>
+        <location filename="main.qml" line="526"/>
         <source>button-open-downloads</source>
         <translation>Open Downloads Folder</translation>
     </message>
     <message>
-        <location filename="main.qml" line="317"/>
-        <location filename="main.qml" line="404"/>
+        <location filename="main.qml" line="369"/>
+        <location filename="main.qml" line="450"/>
         <source>status-unknown</source>
         <translation>Unknown</translation>
     </message>
@@ -127,27 +144,27 @@
         <translation>Close to system tray?</translation>
     </message>
     <message>
-        <location filename="main.qml" line="418"/>
+        <location filename="main.qml" line="464"/>
         <source>label-actions</source>
         <translation>Actions</translation>
     </message>
     <message>
-        <location filename="main.qml" line="428"/>
+        <location filename="main.qml" line="473"/>
         <source>button-start-downloads</source>
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="main.qml" line="453"/>
+        <location filename="main.qml" line="494"/>
         <source>button-stop-all-downloads</source>
         <translation>Stop All Downloads</translation>
     </message>
     <message>
-        <location filename="main.qml" line="468"/>
+        <location filename="main.qml" line="517"/>
         <source>button-disable-autodownloads</source>
         <translation>Disable Autodownloads</translation>
     </message>
     <message>
-        <location filename="main.qml" line="469"/>
+        <location filename="main.qml" line="518"/>
         <source>button-enable-autodownloads</source>
         <translation>Enable Autodownloads</translation>
     </message>

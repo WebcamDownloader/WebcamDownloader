@@ -10,6 +10,7 @@
 #include "webcamregistry.h"
 #include "webcaminfo.h"
 #include "settings.h"
+#include "newversionchecker.h"
 
 #include "console/console.h"
 
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     qmlRegisterType<WebcamRegistry>("webcam.downloader", 1, 0, "WebcamRegistry");
+    qmlRegisterType<NewVersionChecker>("webcam.downloader", 1, 0, "NewVersionChecker");
     engine.rootContext()->setContextProperty("settings", new Settings(false, &app));
     engine.load(url);
 

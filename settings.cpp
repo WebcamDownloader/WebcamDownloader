@@ -176,6 +176,27 @@ void Settings::setDownloadDirectory(QString directory)
     }
 }
 
+bool Settings::checkForNewVersions()
+{
+    settings.beginGroup("app_settings");
+    auto enabled = settings.value("check_for_new_versions", true).toBool();
+    settings.endGroup();
+    return enabled;
+}
+
+void Settings::setCheckForNewVersions(bool check)
+{
+    if (isReadOnly) {
+        return;
+    }
+    if (check != checkForNewVersions()) {
+        settings.beginGroup("app_settings");
+        settings.setValue("check_for_new_versions", check);
+        settings.endGroup();
+        emit checkForNewVersionsChanged();
+    }
+}
+
 bool Settings::autoDownloadsEnabled()
 {
     settings.beginGroup("app_settings");

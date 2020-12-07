@@ -80,7 +80,12 @@ void WebcamRegistry::handleInfoResult(WebcamInfo webcamInfo)
 
 void WebcamRegistry::openDirectory(QString directory)
 {
-    QDesktopServices::openUrl("file:///" + directory);
+    openUrl("file:///" + directory);
+}
+
+void WebcamRegistry::openUrl(QString url)
+{
+    QDesktopServices::openUrl(url);
 }
 
 void WebcamRegistry::startDownload(QVariantMap webcamInfo, QString directory)
