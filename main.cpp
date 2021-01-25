@@ -6,6 +6,7 @@
 #include <QTranslator>
 #include <QQmlEngine>
 #include <QQmlContext>
+#include <QSharedMemory>
 
 #include "webcamregistry.h"
 #include "webcaminfo.h"
@@ -29,6 +30,12 @@ int main(int argc, char *argv[])
 #ifdef __WIN32
     ShowWindow(GetConsoleWindow(), SW_HIDE);
 #endif
+    }
+
+    // todo: protect against crashes once Linux version is released
+    QSharedMemory lock("71AD6F2B-13BF-425C-9455-B0569B79C600"); // same uuid as in installer
+    if (!lock.create(512, QSharedMemory::ReadWrite)) {
+        return -42;
     }
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
