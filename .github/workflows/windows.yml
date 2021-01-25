@@ -1,10 +1,7 @@
 name: Build for Windows
 
 on:
-  push:
-    tags:
-      - v*
-  workflow_dispatch:
+  - push
 
 jobs:
   build:
@@ -18,7 +15,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: '5.15.2'
+          version: '6.0.0'
           arch: win64_mingw81
       - name: Compile App
         run: lrelease WebcamDownloader.pro && qmake && make
@@ -28,41 +25,8 @@ jobs:
         run: choco install -y innosetup 7zip
       - name: Create Installer
         run: iscc setupscript.iss && mv ..\WebcamDownloaderSetup.exe .
-      - name: Create Zip
-        run: 7z a WebcamDownloader.zip ..\WebcamDownloader-Release
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
           name: WebcamDownloader
-          path: |
-            WebcamDownloaderSetup.exe
-            WebcamDownloader.zip
-      - name: Create a Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-          body: Download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below
-      - name: Upload Setup
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./WebcamDownloaderSetup.exe
-          asset_name: WebcamDownloaderSetup.exe
-          asset_content_type: application/vnd.microsoft.portable-executable
-      - name: Upload Zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./WebcamDownloader.zip
-          asset_name: WebcamDownloader.zip
-          asset_content_type: application/zip
+          path: WebcamDownloaderSetup.exe
