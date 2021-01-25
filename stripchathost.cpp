@@ -39,7 +39,7 @@ WebcamInfo StripchatHost::getModelInfo(QString urlOrName)
     QNetworkRequest request(detailsUrl);
     request.setHeader(QNetworkRequest::KnownHeaders::UserAgentHeader, userAgentGenerator.getRandomUserAgent());
     request.setRawHeader("Referer", "https://stripchat.com");
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::RedirectPolicy::NoLessSafeRedirectPolicy);
     auto reply = manager.get(request);
     connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
     eventLoop.exec();

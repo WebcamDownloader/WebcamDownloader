@@ -44,7 +44,7 @@ WebcamInfo ChaturbateHost::getModelInfo(QString urlOrName)
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::KnownHeaders::UserAgentHeader, userAgentGenerator.getRandomUserAgent());
     request.setRawHeader("Referer", "https://chaturbate.com/");
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::RedirectPolicy::NoLessSafeRedirectPolicy);
     auto reply = manager.get(request);
     connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
     eventLoop.exec();
