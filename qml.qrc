@@ -3,4 +3,8 @@
         <file>main.qml</file>
         <file>icon.png</file>
     </qresource>
+    <qresource prefix="/pages">
+        <file>Help.qml</file>
+        <file>Settings.qml</file>
+    </qresource>
 </RCC>
