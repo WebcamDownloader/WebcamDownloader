@@ -24,5 +24,5 @@ void NewVersionChecker::onLatestVersionReceived(QNetworkReply *reply)
 
 QVersionNumber NewVersionChecker::currentVersion()
 {
-    return QVersionNumber::fromString("0.3.1");
+    return QVersionNumber::fromString("0.3.3");
 }
