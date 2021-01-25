@@ -30,3 +30,5 @@ jobs:
         with:
           name: WebcamDownloader
           path: WebcamDownloaderSetup.exe
+          if-no-files-found: error
+          retention-days: 7

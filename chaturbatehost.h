@@ -6,7 +6,6 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
-#include <QRegExp>
 #include <QRegularExpression>
 
 #include "webcamhost.h"
