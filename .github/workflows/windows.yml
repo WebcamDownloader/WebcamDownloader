@@ -37,6 +37,8 @@ jobs:
           path: |
             WebcamDownloaderSetup.exe
             WebcamDownloader.zip
+          if-no-files-found: error
+          retention-days: 7
       - name: Create a Release
         id: create_release
         uses: actions/create-release@v1
