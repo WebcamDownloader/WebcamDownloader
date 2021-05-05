@@ -19,7 +19,7 @@ public:
     QString description() override;
     QString help() override;
     QString name() override;
-    int run(QStringList arguments) override;
+    void run() override;
 
 private classes:
     class OutputWriter {

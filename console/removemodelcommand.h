@@ -12,7 +12,7 @@ class RemoveModelCommand : public Command
 public:
     explicit RemoveModelCommand(QObject *parent = nullptr);
     QString name() override;
-    int run(QStringList arguments) override;
+    void run() override;
     QString description() override;
     QString help() override;
 

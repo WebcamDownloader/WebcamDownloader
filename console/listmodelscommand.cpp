@@ -30,17 +30,18 @@ QString ListModelsCommand::name()
     return "models";
 }
 
-int ListModelsCommand::run(QStringList arguments)
+void ListModelsCommand::run()
 {
     QTextStream err(stderr);
     QTextStream out(stdout);
 
-    auto format = findFormat(arguments);
+    auto format = findFormat(*arguments);
 
     if (!allowedFormats.contains(format)) {
         err << "Unsupported format: " << format << "\n"
             << "Valid values are: " << allowedFormats.join(", ") << "\n";
-        return 1;
+        emit commandFinished(1);
+        return;
     }
 
     auto writer = getWriter(format);
@@ -62,7 +63,7 @@ int ListModelsCommand::run(QStringList arguments)
 
     out << result;
 
-    return 0;
+    emit commandFinished();
 }
 
 QString ListModelsCommand::findFormat(QStringList arguments)

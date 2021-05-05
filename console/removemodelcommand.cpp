@@ -9,28 +9,31 @@ QString RemoveModelCommand::name()
     return "remove";
 }
 
-int RemoveModelCommand::run(QStringList arguments)
+void RemoveModelCommand::run()
 {
     QTextStream err(stderr);
 
-    if (arguments.length() < 2) {
+    if (arguments->length() < 2) {
         err << "Wrong arguments count" << "\n" << usage << "\n";
-        return 1;
+        emit commandFinished(1);
+        return;
     }
-    arguments.removeAt(0);
+    arguments->removeAt(0);
 
     bool silentFail = false;
-    if (auto silentFailIndex = arguments.indexOf("--silentfail"); silentFailIndex > -1) {
+    if (auto silentFailIndex = arguments->indexOf("--silentfail"); silentFailIndex > -1) {
         silentFail = true;
-        arguments.removeAt(silentFailIndex);
+        arguments->removeAt(silentFailIndex);
     }
-    auto modelsToDelete = findModelsToDelete(arguments);
+    auto modelsToDelete = findModelsToDelete(*arguments);
 
     if (modelsToDelete.size() == 0 && silentFail) {
-        return 0;
+        emit commandFinished();
+        return;
     } else if (modelsToDelete.size() == 0) {
         err << "Model not found in database" << "\n";
-        return 2;
+        emit commandFinished(2);
+        return;
     }
 
     QMapIterator<QString, QString> iterator(modelsToDelete);
@@ -41,7 +44,7 @@ int RemoveModelCommand::run(QStringList arguments)
         settings.deleteModel(host, model);
     }
 
-    return 0;
+    emit commandFinished();
 }
 
 QString RemoveModelCommand::description()

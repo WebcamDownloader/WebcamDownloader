@@ -43,6 +43,7 @@ ApplicationWindow {
         id: trayIcon
         icon.source: "qrc:/icon.png"
         visible: settings.closeToTray()
+        tooltip: '' // todo
 
         menu: Labs.Menu {
             id: trayMenu

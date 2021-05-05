@@ -11,7 +11,7 @@ class AddModelCommand : public Command
 public:
     explicit AddModelCommand(QObject *parent = nullptr);
     QString name() override;
-    int run(QStringList arguments) override;
+    void run() override;
     QString description() override;
     QString help() override;
 

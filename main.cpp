@@ -7,6 +7,7 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QSharedMemory>
+#include <QTimer>
 
 #include "webcamregistry.h"
 #include "webcaminfo.h"
@@ -22,10 +23,23 @@ int main(int argc, char *argv[])
     if (argc > 1 || debugCli) {
         QCoreApplication app(argc, argv);
         Console console;
+
+        Command *command;
+        auto arguments = app.arguments();
         if (debugCli) {
-            return console.handler(app.arguments() << "help");
+            command = console.findCommand(arguments << "models");
+        } else {
+            command = console.findCommand(&app);
         }
-        return console.handler(&app);
+        arguments.removeAt(0);
+        command->setArguments(arguments);
+
+        QObject::connect(command, &Command::commandFinished, &app, [](int exitCode) {
+            QCoreApplication::exit(exitCode);
+        });
+        QTimer::singleShot(0, command, &Command::run);
+
+        return app.exec();
     } else {
 #ifdef __WIN32
     ShowWindow(GetConsoleWindow(), SW_HIDE);

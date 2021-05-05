@@ -9,22 +9,24 @@ QString AddModelCommand::name()
     return "add";
 }
 
-int AddModelCommand::run(QStringList arguments)
+void  AddModelCommand::run()
 {
     QTextStream err(stderr);
 
-    if (arguments.length() < 3) {
+    if (arguments->length() < 3) {
         err << "Wrong arguments count!" << "\n"
             << usageString << "\n";
-        return 1;
+        emit commandFinished(1);
+        return;
     }
 
-    auto hostName = arguments.at(1);
-    auto modelName = arguments.at(2);
+    auto hostName = arguments->at(1);
+    auto modelName = arguments->at(2);
 
     if (!isValidHost(hostName)) {
         err << "Invalid host: " << hostName << "\n";
-        return 2;
+        emit commandFinished(2);
+        return;
     }
 
     auto host = registry.getHost(hostName);
@@ -32,11 +34,11 @@ int AddModelCommand::run(QStringList arguments)
 
     if (info.error()) {
         err << "The model was not found" << "\n";
-        return 3;
+        emit commandFinished(3);
     }
 
-    settings.setModelData(info.host(), info.modelName(), arguments.contains("--autodownload"));
-    return 0;
+    settings.setModelData(info.host(), info.modelName(), arguments->contains("--autodownload"));
+    emit commandFinished();
 }
 
 QString AddModelCommand::description()

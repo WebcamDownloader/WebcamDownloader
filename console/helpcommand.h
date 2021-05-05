@@ -14,7 +14,7 @@ public:
     QString name() override;
     QString description() override;
     QString help() override;
-    int run(QStringList arguments) override;
+    void run() override;
 
 private:
     QString getDescription(QString commandName);

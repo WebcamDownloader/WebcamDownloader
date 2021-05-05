@@ -9,3 +9,9 @@ bool Command::isDefault()
 {
     return false;
 }
+
+void Command::setArguments(QStringList &arguments)
+{
+    this->arguments = &arguments;
+}
+

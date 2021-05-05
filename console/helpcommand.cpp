@@ -26,15 +26,15 @@ QString HelpCommand::help()
     return "Wow, running a help command on help command? That's like helpception.";
 }
 
-int HelpCommand::run(QStringList arguments)
+void HelpCommand::run()
 {
     QTextStream out(stdout);
     QTextStream err(stderr);
 
-    int exitCode = arguments.at(0) == name() ? 0 : 1;
-    arguments.removeAt(0);
+    int exitCode = arguments->at(0) == name() ? 0 : 1;
+    arguments->removeAt(0);
 
-    if (arguments.count() == 0) {
+    if (arguments->count() == 0) {
         err << "Usage: WebcamDownloader [command] [arguments]" << "\n";
         err << "List of commands:" << "\n";
         QListIterator<Command*> iterator(*commands);
@@ -48,16 +48,16 @@ int HelpCommand::run(QStringList arguments)
         QListIterator<Command*> iterator(*commands);
         while (iterator.hasNext()) {
             auto command = iterator.next();
-            if (command->name() == arguments.at(0)) {
+            if (command->name() == arguments->at(0)) {
                 err << command->help() << "\n";
                 found = true;
                 break;
             }
         }
         if (!found) {
-            err << "Command '" << arguments.at(0) << "' not found" << "\n";
+            err << "Command '" << arguments->at(0) << "' not found" << "\n";
             exitCode = 2;
         }
     }
-    return exitCode;
+    emit commandFinished(exitCode);
 }

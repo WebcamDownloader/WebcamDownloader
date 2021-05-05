@@ -19,13 +19,12 @@ QString ListHostsCommand::name()
     return "hosts";
 }
 
-int ListHostsCommand::run(QStringList arguments)
+void ListHostsCommand::run()
 {
-    Q_UNUSED(arguments);
     QTextStream out(stdout);
     QMapIterator<QString, QVariant> iterator(registry->getTypes());
     while (iterator.hasNext()) {
         out << iterator.next().key() << "\n";
     }
-    return 0;
+    emit commandFinished();
 }

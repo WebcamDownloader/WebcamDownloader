@@ -17,11 +17,11 @@ class Console : public QObject
     Q_OBJECT
 public:
     explicit Console(QObject *parent = nullptr);
-    int handler(QCoreApplication *app);
-    int handler(QStringList arguments);
+    Command* findCommand(QString name);
+    Command* findCommand(QCoreApplication *app);
+    Command* findCommand(QStringList arguments);
 
 private:
-    Command* findCommand(QString name);
     QList<Command*> commands;
 };
 

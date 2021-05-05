@@ -9,19 +9,6 @@ Console::Console(QObject *parent) : QObject(parent)
     commands.append(new HelpCommand(this, &commands));
 }
 
-int Console::handler(QCoreApplication *app)
-{
-    auto arguments = app->arguments();
-    return handler(app->arguments());
-}
-
-int Console::handler(QStringList arguments)
-{
-    auto command = findCommand(arguments.at(1));
-    arguments.removeAt(0);
-    return command->run(arguments);
-}
-
 Command *Console::findCommand(QString name)
 {
     QListIterator<Command*> iterator(commands);
@@ -38,4 +25,14 @@ Command *Console::findCommand(QString name)
     }
 
     return defaultCommand;
+}
+
+Command *Console::findCommand(QCoreApplication *app)
+{
+    return findCommand(app->arguments());
+}
+
+Command *Console::findCommand(QStringList arguments)
+{
+    return findCommand(arguments.at(1));
 }
