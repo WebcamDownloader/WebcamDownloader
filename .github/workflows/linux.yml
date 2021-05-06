@@ -17,17 +17,19 @@ jobs:
             osVersion: '18.04'
           - imageVersion: '5.15.0'
             osVersion: '20.04'
+    container: rikudousage/qt-static:${{ matrix.imageVersion }}
 
     steps:
+      - name: Install Git
+        env:
+          TZ: Europe/London
+        run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
           lfs: true
       - name: Compile App
-        uses: docker://rikudousage/qt-static:${{ matrix.imageVersion }}
-        with:
-          entrypoint: /bin/bash
-          args: -c "lrelease WebcamDownloader.pro && qmake && make"
+        run: lrelease WebcamDownloader.pro && qmake && make
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
