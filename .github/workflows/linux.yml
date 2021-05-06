@@ -26,8 +26,6 @@ jobs:
         run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
       - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          lfs: true
       - name: Compile App
         run: lrelease WebcamDownloader.pro && qmake && make
       - name: Create Artifact
