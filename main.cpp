@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
         Command *command;
         auto arguments = app.arguments();
-        if (forceCli) {
+        if (forceCli && arguments.size() == 1) {
             arguments << "help";
         }
         if (debugCli) {
