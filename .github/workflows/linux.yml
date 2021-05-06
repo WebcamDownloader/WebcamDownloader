@@ -25,7 +25,9 @@ jobs:
           lfs: true
       - name: Compile App
         uses: docker://rikudousage/qt-static:${{ matrix.imageVersion }}
-        run: lrelease WebcamDownloader.pro && qmake && make
+        with:
+          entrypoint: /bin/bash
+          args: -c "lrelease WebcamDownloader.pro && qmake && make"
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
