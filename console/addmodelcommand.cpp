@@ -9,7 +9,7 @@ QString AddModelCommand::name()
     return "add";
 }
 
-void  AddModelCommand::run()
+void AddModelCommand::run()
 {
     QTextStream err(stderr);
 

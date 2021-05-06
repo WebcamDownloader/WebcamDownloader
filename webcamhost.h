@@ -14,6 +14,7 @@ public:
     virtual QString getName() = 0;
     virtual QString getCodeName() = 0;
     virtual WebcamInfo getModelInfo(QString urlOrName) = 0;
+    virtual QString getRefererBase() = 0;
 protected:
     UserAgentGenerator userAgentGenerator;
 };

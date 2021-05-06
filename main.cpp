@@ -22,12 +22,13 @@ int main(int argc, char *argv[])
 
     if (argc > 1 || debugCli) {
         QCoreApplication app(argc, argv);
+        qRegisterMetaType<WebcamInfo>("WebcamInfo");
         Console console;
 
         Command *command;
         auto arguments = app.arguments();
         if (debugCli) {
-            command = console.findCommand(arguments << "models");
+            command = console.findCommand(arguments << "start");
         } else {
             command = console.findCommand(&app);
         }

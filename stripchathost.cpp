@@ -61,3 +61,8 @@ WebcamInfo StripchatHost::getModelInfo(QString urlOrName)
     auto available = document.value("cam").toObject().value("isCamAvailable").toBool();
     return WebcamInfo(getCodeName(), name, available, streamUrl, name.isEmpty());
 }
+
+QString StripchatHost::getRefererBase()
+{
+    return "https://stripchat.com/";
+}

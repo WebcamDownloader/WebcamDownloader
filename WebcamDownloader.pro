@@ -20,6 +20,7 @@ SOURCES += \
         console/addmodelcommand.cpp \
         console/command.cpp \
         console/console.cpp \
+        console/downloadcommand.cpp \
         console/helpcommand.cpp \
         console/listhostscommand.cpp \
         console/listmodelscommand.cpp \
@@ -56,6 +57,7 @@ HEADERS += \
     console/addmodelcommand.h \
     console/command.h \
     console/console.h \
+    console/downloadcommand.h \
     console/helpcommand.h \
     console/listhostscommand.h \
     console/listmodelscommand.h \

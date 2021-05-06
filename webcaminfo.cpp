@@ -73,6 +73,11 @@ bool WebcamInfo::error()
     return mError;
 }
 
+bool WebcamInfo::online()
+{
+    return mIsOnline;
+}
+
 bool WebcamInfo::operator>(const WebcamInfo &right) const
 {
     return mModelName > right.mModelName;

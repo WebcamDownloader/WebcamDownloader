@@ -19,6 +19,7 @@ public:
     QString host();
     QUrl streamUrl();
     bool error();
+    bool online();
 
     bool operator>(const WebcamInfo& right) const;
     bool operator<(const WebcamInfo& right) const;

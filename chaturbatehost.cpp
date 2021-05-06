@@ -98,3 +98,8 @@ WebcamInfo ChaturbateHost::getModelInfo(QString urlOrName)
 
     return WebcamInfo(getCodeName(), modelName, true, streamUrl, false);
 }
+
+QString ChaturbateHost::getRefererBase()
+{
+    return "https://chaturbate.com/";
+}
