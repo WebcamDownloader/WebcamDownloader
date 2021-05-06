@@ -40,6 +40,9 @@ void HelpCommand::run()
         QListIterator<Command*> iterator(*commands);
         while (iterator.hasNext()) {
             auto command = iterator.next();
+            if (command->isInternal()) {
+                continue;
+            }
             err << " " << command->name() << "\t\t" << command->description() << "\n";
         }
         err << "You can also use help [command] to display detailed information about the command" << "\n";

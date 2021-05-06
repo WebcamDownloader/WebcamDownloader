@@ -18,6 +18,7 @@ public:
     void run() override;
     QString description() override;
     QString help() override;
+    virtual bool isInternal() override;
 
 signals:
     void validModelsFound(int count);

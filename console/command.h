@@ -13,6 +13,7 @@ public:
     virtual QString help() = 0;
     virtual bool isDefault();
     virtual void setArguments(QStringList &arguments);
+    virtual bool isInternal();
 
 protected:
     QStringList *arguments = nullptr;

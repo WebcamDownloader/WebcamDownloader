@@ -96,3 +96,9 @@ QString DownloadCommand::help()
         "(will start downloading all models that are set to autodownload)" "\n"
     );
 }
+
+bool DownloadCommand::isInternal()
+{
+    // this command is not yet fleshed out to be production ready, it can be changed any time
+    return true;
+}
