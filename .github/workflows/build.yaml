@@ -93,41 +93,45 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_18.04
-          path: ubuntu_18.04_gui
+          path: WebcamDownloaderLinux_18.04_gui
         continue-on-error: true
       - name: Download Ubuntu 18.04 (CLI)
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_18.04_cli_only
-          path: ubuntu_18.04_cli
+          path: WebcamDownloaderLinux_18.04_cli
         continue-on-error: true
       - name: Download Ubuntu 20.04 (GUI)
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_20.04
-          path: ubuntu_20.04_gui
+          path: WebcamDownloaderLinux_20.04_gui
         continue-on-error: true
       - name: Download Ubuntu 20.04 (CLI)
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_20.04_cli_only
-          path: ubuntu_20.04_cli
+          path: WebcamDownloaderLinux_20.04_cli
         continue-on-error: true
-#      - name: Create a Release
-#        uses: softprops/action-gh-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          name: Release ${{ github.ref }}
-#          draft: false
-#          prerelease: true
-#          body: |
-#            For Windows download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below.
-#
-#            For Ubuntu download WebcamDownloader_18.04 or WebcamDownloader_20.04 based on your distribution.
-#            You can also choose to download a version with graphical interface or without it.
-#          files: |
-#            WebcamDownloaderSetup.exe
-#            WebcamDownloader.zip
+      - name: Create a Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+          body: |
+            For Windows download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below.
+
+            For Ubuntu download WebcamDownloader_18.04 or WebcamDownloader_20.04 based on your distribution.
+            You can also choose to download a version with graphical interface or without it.
+          files: |
+            WebcamDownloaderSetup.exe
+            WebcamDownloader.zip
+            WebcamDownloaderLinux_18.04_gui
+            WebcamDownloaderLinux_18.04_cli
+            WebcamDownloaderLinux_20.04_gui
+            WebcamDownloaderLinux_20.04_cli
       - name: Debug
         run: ls -lah
