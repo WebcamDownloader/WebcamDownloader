@@ -2,9 +2,8 @@ name: Build for Linux
 
 on:
   push:
-    tags:
-      - v*
-    branches: # temporary
+#    tags:
+#      - v*
   workflow_dispatch:
 
 jobs:
