@@ -12,7 +12,11 @@ jobs:
     strategy:
       matrix:
         imageVersion: ['5.14', '5.15.0'] # bug in 5.15, need to use specifically 5.15.0
-    container: rikudousage/qt-static:${{ matrix.imageVersion }}
+        include:
+          - imageVersion: '5.14'
+            osVersion: '18.04'
+          - imageVersion: '5.15.0'
+            osVersion: '20.04'
 
     steps:
       - name: Checkout Code
@@ -20,11 +24,12 @@ jobs:
         with:
           lfs: true
       - name: Compile App
+        uses: docker://rikudousage/qt-static:${{ matrix.imageVersion }}
         run: lrelease WebcamDownloader.pro && qmake && make
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: WebcamDownloader_${{ matrix.imageVersion }}
+          name: WebcamDownloader_${{ matrix.osVersion }}
           path: WebcamDownloader
           if-no-files-found: error
           retention-days: 7
