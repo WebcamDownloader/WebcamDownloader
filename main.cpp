@@ -1,13 +1,16 @@
 #ifdef __WIN32
 #include "windows.h"
 #endif
+#ifndef NO_GUI
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QTranslator>
 #include <QQmlEngine>
 #include <QQmlContext>
+#endif
+#include <QTranslator>
 #include <QSharedMemory>
 #include <QTimer>
+#include <QTextStream>
 
 #include "webcamregistry.h"
 #include "webcaminfo.h"
@@ -19,18 +22,26 @@
 int main(int argc, char *argv[])
 {
     constexpr bool debugCli = false;
+#ifndef NO_GUI
+    constexpr bool forceCli = false;
+#else
+    constexpr bool forceCli = true;
+#endif
 
-    if (argc > 1 || debugCli) {
+    if (argc > 1 || debugCli || forceCli) {
         QCoreApplication app(argc, argv);
         qRegisterMetaType<WebcamInfo>("WebcamInfo");
         Console console;
 
         Command *command;
         auto arguments = app.arguments();
+        if (forceCli) {
+            arguments << "help";
+        }
         if (debugCli) {
             command = console.findCommand(arguments << "start");
         } else {
-            command = console.findCommand(&app);
+            command = console.findCommand(arguments);
         }
         arguments.removeAt(0);
         command->setArguments(arguments);
@@ -52,6 +63,8 @@ int main(int argc, char *argv[])
     if (!lock.create(512, QSharedMemory::ReadWrite)) {
         return -42;
     }
+
+#ifndef NO_GUI
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
@@ -79,4 +92,5 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     return app.exec();
+#endif
 }

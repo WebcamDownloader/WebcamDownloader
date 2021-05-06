@@ -6,7 +6,9 @@
 #include <QThread>
 #include <QByteArray>
 #include <QStandardPaths>
+#ifndef NO_GUI
 #include <QDesktopServices>
+#endif
 
 #include "webcamhost.h"
 #include "stripchathost.h"

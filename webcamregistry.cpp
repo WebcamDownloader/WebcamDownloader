@@ -85,7 +85,11 @@ void WebcamRegistry::openDirectory(QString directory)
 
 void WebcamRegistry::openUrl(QString url)
 {
+#ifndef NO_GUI
     QDesktopServices::openUrl(url);
+#else
+   Q_UNUSED(url);
+#endif
 }
 
 void WebcamRegistry::startDownload(QVariantMap webcamInfo, QString directory)

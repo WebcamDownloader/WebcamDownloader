@@ -12,11 +12,16 @@ jobs:
     strategy:
       matrix:
         imageVersion: ['5.14', '5.15.0'] # bug in 5.15, need to use specifically 5.15.0
+        gui: [true, false]
         include:
           - imageVersion: '5.14'
             osVersion: '18.04'
           - imageVersion: '5.15.0'
             osVersion: '20.04'
+          - gui: true
+            suffix: ''
+          - gui: false
+            suffix: _cli_only
     container: rikudousage/qt-static:${{ matrix.imageVersion }}
 
     steps:
@@ -26,12 +31,17 @@ jobs:
         run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
       - name: Checkout Code
         uses: actions/checkout@v2
+      - name: Set No GUI
+        if: matrix.gui == false
+        run: |
+          echo "QT -= quick quickcontrols2 gui" >> WebcamDownloader.pro
+          echo "DEFINES += NO_GUI" >> WebcamDownloader.pro
       - name: Compile App
         run: lrelease WebcamDownloader.pro && qmake && make
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: WebcamDownloader_${{ matrix.osVersion }}
+          name: WebcamDownloader_${{ matrix.osVersion }}${{ matrix.suffix }}
           path: WebcamDownloader
           if-no-files-found: error
           retention-days: 7
