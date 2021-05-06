@@ -12,15 +12,15 @@ jobs:
     strategy:
       matrix:
         imageVersion: ['5.14', '5.15.0'] # bug in 5.15, need to use specifically 5.15.0
-        gui: [true, false]
+        gui: [gui, no-gui]
         include:
           - imageVersion: '5.14'
             osVersion: '18.04'
           - imageVersion: '5.15.0'
             osVersion: '20.04'
-          - gui: true
+          - gui: gui
             suffix: ''
-          - gui: false
+          - gui: no-gui
             suffix: _cli_only
     container: rikudousage/qt-static:${{ matrix.imageVersion }}
 
@@ -32,7 +32,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
       - name: Set No GUI
-        if: matrix.gui == false
+        if: ${{ matrix.gui == 'no-gui' }}
         run: |
           echo "QT -= quick quickcontrols2 gui" >> WebcamDownloader.pro
           echo "DEFINES += NO_GUI" >> WebcamDownloader.pro
