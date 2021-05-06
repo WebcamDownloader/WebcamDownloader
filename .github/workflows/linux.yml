@@ -31,7 +31,7 @@ jobs:
         run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Set No GUI
+      - name: Disable GUI
         if: ${{ matrix.gui == 'no-gui' }}
         run: |
           echo "QT -= quick quickcontrols2 gui" >> WebcamDownloader.pro
