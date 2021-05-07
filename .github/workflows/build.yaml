@@ -126,7 +126,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return context.payload.ref.replace(/\/refs\/tags\//, '');
+            return context.payload.ref.replace(/refs\/tags\//, '');
       - name: Create a Release
         uses: softprops/action-gh-release@v1
         env:
