@@ -43,7 +43,10 @@ void HelpCommand::run()
             if (command->isInternal()) {
                 continue;
             }
-            err << " " << command->name() << "\t\t" << command->description() << "\n";
+            int tabCount = 3 - ceil(command->name().length() / 6.0);
+            QString tabs = QString("\t").repeated(tabCount);
+
+            err << " " << command->name() << tabs << command->description() << "\n";
         }
         err << "You can also use help [command] to display detailed information about the command" << "\n";
     } else {

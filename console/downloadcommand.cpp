@@ -8,7 +8,7 @@ DownloadCommand::DownloadCommand(QObject *parent): Command(parent), settings(thi
 
 QString DownloadCommand::name()
 {
-    return "start";
+    return "download";
 }
 
 void DownloadCommand::run()
@@ -89,10 +89,10 @@ QString DownloadCommand::help()
         "\n"
         "Usage:" "\n"
         "\n"
-        "WebcamDownloader start model_name_1 model_name_2" "\n"
+        "WebcamDownloader download model_name_1 model_name_2" "\n"
         "(will start downloading models named model_name_1 and model_name_2)" "\n"
         "\n"
-        "WebcamDownloader start" "\n"
+        "WebcamDownloader download" "\n"
         "(will start downloading all models that are set to autodownload)" "\n"
     );
 }

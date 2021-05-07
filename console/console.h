@@ -12,6 +12,7 @@
 #include "addmodelcommand.h"
 #include "removemodelcommand.h"
 #include "downloadcommand.h"
+#include "settingscommand.h"
 
 class Console : public QObject
 {

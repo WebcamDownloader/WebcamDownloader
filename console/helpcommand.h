@@ -2,6 +2,7 @@
 #define HELPCOMMAND_H
 
 #include <QTextStream>
+#include <cmath>
 
 #include "command.h"
 

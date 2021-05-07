@@ -7,6 +7,7 @@ Console::Console(QObject *parent) : QObject(parent)
     commands.append(new AddModelCommand(this));
     commands.append(new RemoveModelCommand(this));
     commands.append(new DownloadCommand(this));
+    commands.append(new SettingsCommand(this));
     commands.append(new HelpCommand(this, &commands));
 }
 

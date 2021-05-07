@@ -25,6 +25,7 @@ SOURCES += \
         console/listhostscommand.cpp \
         console/listmodelscommand.cpp \
         console/removemodelcommand.cpp \
+        console/settingscommand.cpp \
         ffmpeg.cpp \
         main.cpp \
         modelsetting.cpp \
@@ -62,6 +63,7 @@ HEADERS += \
     console/listhostscommand.h \
     console/listmodelscommand.h \
     console/removemodelcommand.h \
+    console/settingscommand.h \
     ffmpeg.h \
     modelsetting.h \
     newversionchecker.h \
