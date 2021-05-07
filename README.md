@@ -19,3 +19,10 @@ If you use the zipped version, unzip the downloaded file, open WebcamDownloader 
 - Downloading multiple streams at once
 - Can be configured to close into system tray, useful in combination with automatic downloading
 - No ads, no tracking, completely open source and free
+
+## Command Line
+
+The app can be used from command line as well as from GUI. Downloading from command line is not currently finished
+and is being actively worked on.
+
+For more information see the [CLI Readme](CLI.md)
