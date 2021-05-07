@@ -79,6 +79,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
   release:
+    name: Release
     needs:
       - build_windows
       - build_ubuntu
@@ -133,5 +134,3 @@ jobs:
             WebcamDownloaderLinux_18.04_cli
             WebcamDownloaderLinux_20.04_gui
             WebcamDownloaderLinux_20.04_cli
-      - name: Debug
-        run: ls -lah
