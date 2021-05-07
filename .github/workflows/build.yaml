@@ -120,12 +120,19 @@ jobs:
           mv 20.04_gui/WebcamDownloader WebcamDownloaderLinux_20.04_gui
           mv 18.04_cli/WebcamDownloader WebcamDownloaderLinux_18.04_cli
           mv 20.04_cli/WebcamDownloader WebcamDownloaderLinux_20.04_cli
+      - name: Extract Version Name
+        id: extract_name
+        uses: actions/github-script@v4
+        with:
+          result-encoding: string
+          script: |
+            return context.payload.ref.replace(/\/refs\/tags\//, '');
       - name: Create a Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Release ${{ github.ref }}
+          name: Release ${{ steps.extract_name.outputs.result }}
           draft: true
           prerelease: false
           body: |
