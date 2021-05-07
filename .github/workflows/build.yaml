@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        imageVersion: [ '5.14', '5.15.0' ] # bug in 5.15, need to use specifically 5.15.0
+        imageVersion: [ '5.12', '5.15.0' ] # bug in 5.15, need to use specifically 5.15.0
         gui: [ gui, no-gui ]
         include:
           - imageVersion: '5.14'
