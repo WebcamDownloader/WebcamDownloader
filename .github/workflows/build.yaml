@@ -94,26 +94,32 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_18.04
-          path: WebcamDownloaderLinux_18.04_gui
+          path: 18.04_gui
         continue-on-error: true
       - name: Download Ubuntu 18.04 (CLI)
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_18.04_cli_only
-          path: WebcamDownloaderLinux_18.04_cli
+          path: 18.04_cli
         continue-on-error: true
       - name: Download Ubuntu 20.04 (GUI)
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_20.04
-          path: WebcamDownloaderLinux_20.04_gui
+          path: 20.04_gui
         continue-on-error: true
       - name: Download Ubuntu 20.04 (CLI)
         uses: actions/download-artifact@v2
         with:
           name: WebcamDownloaderLinux_20.04_cli_only
-          path: WebcamDownloaderLinux_20.04_cli
+          path: 20.04_cli
         continue-on-error: true
+      - name: Rename Files
+        run: |
+          mv 18.04_gui/WebcamDownloader WebcamDownloaderLinux_18.04_gui
+          mv 20.04_gui/WebcamDownloader WebcamDownloaderLinux_20.04_gui
+          mv 18.04_cli/WebcamDownloader WebcamDownloaderLinux_18.04_cli
+          mv 20.04_cli/WebcamDownloader WebcamDownloaderLinux_20.04_cli
       - name: Create a Release
         uses: softprops/action-gh-release@v1
         env:
