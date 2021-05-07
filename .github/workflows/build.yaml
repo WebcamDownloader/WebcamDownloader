@@ -1,0 +1,136 @@
+name: Build App
+
+on:
+  push:
+    tags:
+      - v*
+  workflow_dispatch:
+
+jobs:
+  build_windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '5.15.2'
+          arch: win64_mingw81
+      - name: Compile App
+        run: lrelease WebcamDownloader.pro && qmake && make
+      - name: Create Deployment Dir
+        run: mkdir ..\WebcamDownloader-Release && mv release\WebcamDownloader.exe ..\WebcamDownloader-Release && windeployqt --qmldir . ..\WebcamDownloader-Release\WebcamDownloader.exe && cp dependencies\* ..\WebcamDownloader-Release
+      - name: Install InnoSetup & 7zip
+        run: choco install -y innosetup 7zip
+      - name: Create Installer
+        run: iscc setupscript.iss && mv ..\WebcamDownloaderSetup.exe .
+      - name: Create Zip
+        run: 7z a WebcamDownloader.zip ..\WebcamDownloader-Release
+      - name: Create Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: WebcamDownloaderWindows
+          path: |
+            WebcamDownloaderSetup.exe
+            WebcamDownloader.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  build_ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        imageVersion: [ '5.14', '5.15.0' ] # bug in 5.15, need to use specifically 5.15.0
+        gui: [ gui, no-gui ]
+        include:
+          - imageVersion: '5.14'
+            osVersion: '18.04'
+          - imageVersion: '5.15.0'
+            osVersion: '20.04'
+          - gui: gui
+            suffix: ''
+          - gui: no-gui
+            suffix: _cli_only
+    container: rikudousage/qt-static:${{ matrix.imageVersion }}
+    steps:
+      - name: Install Git
+        env:
+          TZ: Europe/London
+        run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Disable GUI
+        if: ${{ matrix.gui == 'no-gui' }}
+        run: |
+          echo "QT -= quick quickcontrols2 gui" >> WebcamDownloader.pro
+          echo "DEFINES += NO_GUI" >> WebcamDownloader.pro
+      - name: Compile App
+        run: lrelease WebcamDownloader.pro && qmake && make
+      - name: Create Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_${{ matrix.osVersion }}${{ matrix.suffix }}
+          path: WebcamDownloader
+          if-no-files-found: error
+          retention-days: 7
+  release:
+    name: Release
+    needs:
+      - build_windows
+      - build_ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Windows
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderWindows
+        continue-on-error: true
+      - name: Download Ubuntu 18.04 (GUI)
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_18.04
+          path: WebcamDownloaderLinux_18.04_gui
+        continue-on-error: true
+      - name: Download Ubuntu 18.04 (CLI)
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_18.04_cli_only
+          path: WebcamDownloaderLinux_18.04_cli
+        continue-on-error: true
+      - name: Download Ubuntu 20.04 (GUI)
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_20.04
+          path: WebcamDownloaderLinux_20.04_gui
+        continue-on-error: true
+      - name: Download Ubuntu 20.04 (CLI)
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_20.04_cli_only
+          path: WebcamDownloaderLinux_20.04_cli
+        continue-on-error: true
+      - name: Create a Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+          body: |
+            For Windows download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below.
+
+            For Ubuntu download WebcamDownloader_18.04 or WebcamDownloader_20.04 based on your distribution.
+            You can also choose to download a version with graphical interface or without it.
+          files: |
+            WebcamDownloaderSetup.exe
+            WebcamDownloader.zip
+            WebcamDownloaderLinux_18.04_gui
+            WebcamDownloaderLinux_18.04_cli
+            WebcamDownloaderLinux_20.04_gui
+            WebcamDownloaderLinux_20.04_cli

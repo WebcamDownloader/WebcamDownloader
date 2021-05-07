@@ -19,7 +19,6 @@ class Console : public QObject
 public:
     explicit Console(QObject *parent = nullptr);
     Command* findCommand(QString name);
-    Command* findCommand(QCoreApplication *app);
     Command* findCommand(QStringList arguments);
 
 private:
