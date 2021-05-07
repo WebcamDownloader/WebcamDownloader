@@ -28,11 +28,6 @@ Command *Console::findCommand(QString name)
     return defaultCommand;
 }
 
-Command *Console::findCommand(QCoreApplication *app)
-{
-    return findCommand(app->arguments());
-}
-
 Command *Console::findCommand(QStringList arguments)
 {
     return findCommand(arguments.at(1));
