@@ -133,7 +133,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: Release ${{ steps.extract_name.outputs.result }}
-          draft: true
+          draft: false
           prerelease: false
           body: |
             For Windows download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below.
