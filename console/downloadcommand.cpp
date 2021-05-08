@@ -20,6 +20,7 @@ void DownloadCommand::run()
     Ffmpeg *ffmpeg = new Ffmpeg(this);
     QEventLoop mainLoop;
     WebcamRegistry webcamRegistry;
+    QTimer timer(this);
 
     QStringList filter = *arguments;
     QStringList models;
@@ -32,7 +33,9 @@ void DownloadCommand::run()
         while (modelsIterator.hasNext()) {
             auto model = modelsIterator.next().toMap();
             auto modelName = model.value("modelName").toString();
-            if (model.value("autoDownload").toBool() && (filter.size() == 0 || filter.contains(modelName))) {
+            auto autoDownload = model.value("autoDownload").toBool();
+
+            if ((autoDownload && (filter.size() == 0 || filter.contains(modelName))) || filter.contains(modelName)) {
                 models << host << modelName;
             }
         }

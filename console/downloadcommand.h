@@ -3,6 +3,7 @@
 
 #include <QMapIterator>
 #include <QListIterator>
+#include <QTimer>
 
 #include "command.h"
 #include "../settings.h"
