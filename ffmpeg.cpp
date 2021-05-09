@@ -48,6 +48,7 @@ void Ffmpeg::startDownload(WebcamInfo webcamInfo, QString directory)
     connect(process, &QProcess::errorOccurred, this, [process](QProcess::ProcessError error) {
         qDebug() << error;
         qDebug() << process->errorString();
+        qDebug() << process->arguments();
     });
     process->start();
     processes.insert(webcamInfo, process);

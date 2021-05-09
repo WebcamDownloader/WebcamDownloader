@@ -25,6 +25,8 @@ void DownloadCommand::run()
     QStringList filter = *arguments;
     QStringList models;
 
+    QMap<QString, QStringList> inProgressModels;
+
     QMapIterator<QString, QVariant> modelsMapIterator(settings.getModels());
     while (modelsMapIterator.hasNext()) {
         modelsMapIterator.next();
@@ -35,13 +37,26 @@ void DownloadCommand::run()
             auto modelName = model.value("modelName").toString();
             auto autoDownload = model.value("autoDownload").toBool();
 
-            if ((autoDownload && (filter.size() == 0 || filter.contains(modelName))) || filter.contains(modelName)) {
+            if ((autoDownload && filter.size() == 0) || filter.contains(modelName)) {
                 models << host << modelName;
             }
         }
     }
 
-    connect(&webcamRegistry, &WebcamRegistry::results, &mainLoop, [&err, ffmpeg, this](QVariantMap result) {
+    auto updateModels = [&models, &webcamRegistry]() {
+        for (auto i = 0; i < models.size(); i += 2) {
+            auto host = models.at(i);
+            auto name = models.at(i + 1);
+
+            webcamRegistry.fetchInfo(host, name);
+        }
+    };
+
+    connect(&timer, &QTimer::timeout, &mainLoop, [&updateModels]() {
+        updateModels();
+    });
+
+    connect(&webcamRegistry, &WebcamRegistry::results, &mainLoop, [&err, ffmpeg, this, &inProgressModels](QVariantMap result) {
         WebcamInfo webcamInfo(
             result.value("host").toString(),
             result.value("modelName").toString(),
@@ -49,16 +64,37 @@ void DownloadCommand::run()
             result.value("streamUrl").toString(),
             false
         );
-        if (webcamInfo.online()) {
+        if (
+            webcamInfo.online()
+            && (
+                !inProgressModels.contains(webcamInfo.host())
+                || !inProgressModels.value(webcamInfo.host()).contains(webcamInfo.modelName())
+            )
+        ) {
             qDebug() << QString("Found online model '%1' of host '%2'").arg(webcamInfo.modelName()).arg(webcamInfo.host()) << "\n";
             ffmpeg->startDownload(webcamInfo, settings.downloadDirectory());
         }
     });
-    connect(ffmpeg, &Ffmpeg::downloadStarted, &mainLoop, [&err](QString host, QString modelName) {
+    connect(ffmpeg, &Ffmpeg::downloadStarted, &mainLoop, [&err, &inProgressModels](QString host, QString modelName) {
+        if (!inProgressModels.contains(host)) {
+            inProgressModels.insert(host, QStringList());
+        }
+        auto models = inProgressModels.value(host);
+        inProgressModels.insert(host, models << modelName);
         qDebug() << QString("Started downloading of model '%1' from host '%2'").arg(modelName).arg(host) << "\n";
+        qDebug() << inProgressModels;
     });
-    connect(ffmpeg, &Ffmpeg::downloadEnded, &mainLoop, [&err](QString host, QString modelName) {
+    connect(ffmpeg, &Ffmpeg::downloadEnded, &mainLoop, [&err, &inProgressModels](QString host, QString modelName) {
+        if (inProgressModels.contains(host)) {
+            auto models = inProgressModels.value(host);
+            if (models.contains(modelName)) {
+                auto index = models.indexOf(modelName);
+                models.removeAt(index);
+                inProgressModels.insert(host, models);
+            }
+        }
         qDebug() << QString("Stopped downloading of model '%1' from host '%2'").arg(modelName).arg(host) << "\n";
+        qDebug() << inProgressModels;
     });
     connect(this, &DownloadCommand::validModelsFound, &mainLoop, [&err](int count) {
         qDebug() << QString("Found %1 models to download").arg(count) << "\n";
@@ -67,13 +103,9 @@ void DownloadCommand::run()
         qDebug() << QString("%1 of those models are online").arg(count) << "\n";
     });
 
-    for (auto i = 0; i < models.size(); i += 2) {
-        auto host = models.at(i);
-        auto name = models.at(i + 1);
+    updateModels();
 
-        webcamRegistry.fetchInfo(host, name);
-    }
-
+    timer.start(10'000);
     mainLoop.exec();
 }
 

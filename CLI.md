@@ -52,7 +52,4 @@ The list of commands follows. Note that the `download` command is a work in prog
         - `models` *optional* - space separated list of models to be downloaded, if the arguments are not present
         the default action is to download all models that are set to autodownload
     - Caveats:
-        - In the current implementation the models don't resume download after going offline
-        - In the current implementation nly models that are online at the time this command is run are downloaded
-        - *All of these caveats will be fixed in future versions*
-    
+        - Currently the command doesn't print any output

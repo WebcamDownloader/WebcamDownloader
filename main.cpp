@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
             arguments << "help";
         }
         if (debugCli) {
-            command = console.findCommand(arguments << "help" << "settings");
+            command = console.findCommand(arguments << "download");
         } else {
             command = console.findCommand(arguments);
         }
