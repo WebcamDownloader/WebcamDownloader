@@ -147,3 +147,35 @@ jobs:
             WebcamDownloaderLinux_18.04_cli
             WebcamDownloaderLinux_20.04_gui
             WebcamDownloaderLinux_20.04_cli
+  docker:
+    name: Create Docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Version Name
+        id: extract_name
+        uses: actions/github-script@v4
+        with:
+          result-encoding: string
+          script: |
+            return context.payload.ref.replace(/refs\/tags\/v/, '');
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Download Binary
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_20.04_cli_only
+      - name: Move Binary
+        run: mv WebcamDownloader docker/WebcamDownloaderLinux_20.04_cli
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: webcamdownloader
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: |
+            webcamdownloader/webcam-downloader:latest
+            webcamdownloader/webcam-downloader:${{ steps.extract_name.outputs.result }}
+          context: docker
