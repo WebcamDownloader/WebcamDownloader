@@ -149,6 +149,8 @@ jobs:
             WebcamDownloaderLinux_20.04_cli
   docker:
     name: Create Docker
+    needs:
+      - build_ubuntu
     runs-on: ubuntu-latest
     steps:
       - name: Extract Version Name
