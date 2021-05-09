@@ -45,12 +45,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        imageVersion: [ '5.12', '5.15' ]
+        imageVersion: [ '5.12', '5.15.1' ]
         gui: [ gui, no-gui ]
         include:
           - imageVersion: '5.12'
             osVersion: '18.04'
-          - imageVersion: '5.15'
+          - imageVersion: '5.15.1'
             osVersion: '20.04'
           - gui: gui
             suffix: ''
