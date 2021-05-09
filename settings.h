@@ -52,7 +52,7 @@ public slots:
     void setCloseToTray(bool minimize);
 
 private:
-    QSettings settings;
+    QSettings *settings = nullptr;
     WebcamRegistry webcamRegistry;
     const bool isReadOnly;
 };
