@@ -4,6 +4,25 @@ The app can be used with a GUI (when launched with no parameters) or CLI (when l
 
 > The exception are CLI only builds for Linux which can only be used from CLI and don't require X server
 
+## Docker
+
+You can also use a docker image instead of downloading the binary if the app doesn't run on your system:
+
+`webcamdownloader/webcam-downloader:latest`
+
+To save your config across runs, mount a directory that points to `/app/config`:
+
+`docker run --rm -it -v /path/to/my/config/dir:/app/config webcamdownloader/webcam-downloader:latest`
+
+You can set an alias to this command and then use the subcommands, for example:
+
+```bash
+alias WebcamDownloader='docker run --rm -it -v /path/to/my/config/dir:/app/config webcamdownloader/webcam-downloader:latest'
+WebcamDownloader models --format json
+```
+
+> For the `download` subcommand to work the docker must be running in interactive mode.
+
 ## Commands
 
 The list of commands follows. Note that the `download` command is a work in progress.

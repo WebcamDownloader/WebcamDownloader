@@ -78,6 +78,7 @@ jobs:
           path: WebcamDownloader
           if-no-files-found: error
           retention-days: 7
+
   release:
     name: Release
     needs:
@@ -138,8 +139,10 @@ jobs:
           body: |
             For Windows download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below.
 
-            For Ubuntu download WebcamDownloader_18.04 or WebcamDownloader_20.04 based on your distribution.
-            You can also choose to download a version with graphical interface or without it.
+            For Ubuntu download `WebcamDownloader_18.04` or `WebcamDownloader_20.04` based on your distribution.
+            You can download a version with graphical interface or without it.
+
+            You can also use a docker image `webcamdownloader/webcam-downloader`.
           files: |
             WebcamDownloaderSetup.exe
             WebcamDownloader.zip
