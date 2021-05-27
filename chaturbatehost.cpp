@@ -73,12 +73,11 @@ WebcamInfo ChaturbateHost::getModelInfo(QString urlOrName)
     }
 
     QRegularExpression regex("(\\\\u[0-9a-fA-F]{4})");
-    auto matches = regex.match(line);
+    auto matches = regex.globalMatch(line);
 
-    if (matches.hasMatch()) {
-        for (auto i = 0; i < matches.lastCapturedIndex(); ++i) {
-            line.replace(matches.captured(i), QChar(matches.captured(i).right(4).toUShort(0, 16)));
-        }
+    while (matches.hasNext()) {
+        auto match = matches.next();
+        line.replace(match.captured(1), QChar(match.captured(1).right(4).toUShort(0, 16)));
     }
 
     QString streamUrl;
