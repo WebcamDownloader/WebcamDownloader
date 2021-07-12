@@ -77,7 +77,7 @@ ApplicationWindow {
         id: registry
         onResults: {
             modelNotFound.opacity = 0;
-            let autodownload = settings.getModelData(result.host, result.modelName)
+            let autodownload = settings.getModelData(result.host, result.modelName).autoDownload
                 && (
                     typeof toBeStopped[result.host] === 'undefined'
                     || typeof toBeStopped[result.host][result.modelName] === 'undefined'
@@ -496,7 +496,7 @@ ApplicationWindow {
         id: nonAutoDownloadTimer
         repeat: true
         running: true
-        interval: 2 * 60 * 1000 // two minutes
+        interval: 2 * 10 * 1000 // two minutes
         onTriggered: {
             updateStatuses(false);
         }
