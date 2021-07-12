@@ -14,6 +14,7 @@ import "qrc:/pages" as Pages
 ApplicationWindow {
     property var webcamConfig: ({})
     property var downloading: ({})
+    property var toBeStopped: ({})
     id: window
     visible: true
     width: settings.getWindowWidth()
@@ -76,17 +77,32 @@ ApplicationWindow {
         id: registry
         onResults: {
             modelNotFound.opacity = 0;
-            settings.setModelData(result.host, result.modelName)
+            let autodownload = settings.getModelData(result.host, result.modelName)
+                && (
+                    typeof toBeStopped[result.host] === 'undefined'
+                    || typeof toBeStopped[result.host][result.modelName] === 'undefined'
+                );
+
+            settings.setModelData(result.host, result.modelName, autodownload);
             if (typeof webcamConfig[result.host] === 'undefined') {
                 webcamConfig[result.host] = {};
             }
             webcamConfig[result.host][result.modelName] = result;
+
             if (
                 result.isOnline
                 && settings.getModelData(result.host, result.modelName).autoDownload
                 && settings.autoDownloadsEnabled
             ) {
                 registry.startDownload(result, settings.downloadDirectory);
+            } else {
+                registry.stopDownload(result.host, result.modelName);
+                if (
+                    typeof toBeStopped[result.host] !== 'undefined'
+                    && typeof toBeStopped[result.host][result.modelName] !== 'undefined'
+                ) {
+                    delete toBeStopped[result.host][result.modelName];
+                }
             }
         }
         onFetchingInfoFailed: {
@@ -317,7 +333,14 @@ ApplicationWindow {
                                 indicator.implicitWidth: indicator.width
                                 indicator.implicitHeight: indicator.height
                                 onCheckedChanged: {
-                                    settings.setModelData(modelData.host, modelData.modelName, checked);
+                                    if (checked) {
+                                        settings.setModelData(modelData.host, modelData.modelName, checked);
+                                    } else {
+                                        if (typeof toBeStopped[modelData.host] === 'undefined') {
+                                            toBeStopped[modelData.host] = {};
+                                        }
+                                        toBeStopped[modelData.host][modelData.modelName] = true;
+                                    }
                                 }
                             }
                             Text {
