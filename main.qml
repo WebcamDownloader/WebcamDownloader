@@ -167,40 +167,334 @@ ApplicationWindow {
         }
     }
 
-    Column {
-        anchors.fill: parent
-        padding: 10
+    Row {
+        id: addModelRow
+        width: parent.width
         spacing: 10
+        anchors.topMargin: 10
+        anchors.leftMargin: 10
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+
+        ComboBox {
+            id: selectHost
+            textRole: "displayName"
+            valueRole: "value"
+            onActivated: {
+                registry.host = currentValue;
+            }
+            Component.onCompleted: {
+                activated(currentIndex);
+            }
+        }
+        TextField {
+            id: modelNameOrUrl
+            placeholderText: qsTr("placeholder-model-name")
+            width: parent.width - parent.spacing * 4 - selectHost.width - fetchInfoButton.width
+        }
+        Button {
+            id: fetchInfoButton
+            text: qsTr("fetch-info-button-text")
+            onClicked: {
+                registry.fetchInfo(modelNameOrUrl.text);
+            }
+        }
+    }
+
+    Text {
+        id: modelsLabel
+        anchors.left: parent.left
+        anchors.top: addModelRow.bottom
+        anchors.leftMargin: 10
+        anchors.topMargin: 10
+        text: qsTr("label-models")
+        font.pixelSize: 25
+        font.bold: true
+    }
+
+    Text {
+        anchors.left: modelsLabel.right
+        anchors.top: modelsLabel.top
+        anchors.leftMargin: 30
+        id: modelNotFound
+        color: "red"
+        opacity: 0
+        text: qsTr("error-model-not-found")
+    }
+
+    Item {
+        property var model: []
+        property var widths: [0.25, 0.2, 0.1, 0.15, 0.2, 0.2]
+        property int padding: 5
+
+        function getWidth(index) {
+            return widths[index] * width - padding * 2;
+        }
+
+        id: table
+        width: parent.width * 0.8 - 10
+        anchors.top: modelsLabel.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.topMargin: 20
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 20
+        clip: true
+
         Row {
+            anchors.top: parent.top
             width: parent.width
-            spacing: 10
-            ComboBox {
-                id: selectHost
-                textRole: "displayName"
-                valueRole: "value"
-                onActivated: {
-                    registry.host = currentValue;
-                }
-                Component.onCompleted: {
-                    activated(currentIndex);
-                }
+            id: tableHeaderRow
+            Text {
+                width: table.getWidth(0)
+                padding: table.padding
+                text: qsTr('table-header-model-name')
+                font.bold: true
             }
-            TextField {
-                id: modelNameOrUrl
-                placeholderText: qsTr("placeholder-model-name")
-                width: parent.width - parent.spacing * 4 - selectHost.width - fetchInfoButton.width
+            Text {
+                width: table.getWidth(1)
+                padding: table.padding
+                text: qsTr('table-header-friendly-hostname')
+                font.bold: true
             }
-            Button {
-                id: fetchInfoButton
-                text: qsTr("fetch-info-button-text")
-                onClicked: {
-                    registry.fetchInfo(modelNameOrUrl.text);
-                }
+            Text {
+                width: table.getWidth(2)
+                padding: table.padding
+                text: qsTr('table-header-status')
+                font.bold: true
+            }
+            Text {
+                width: table.getWidth(3)
+                padding: table.padding
+                text: qsTr('table-header-download')
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Text {
+                width: table.getWidth(4)
+                padding: table.padding
+                text: qsTr('table-header-auto-download')
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Text {
+                width: table.getWidth(5)
+                padding: table.padding
+                text: qsTr('table-header-delete')
+                font.bold: true
             }
         }
 
+        ListView {
+            model: parent.model
+            anchors.top: tableHeaderRow.bottom
+            height: parent.height
+            width: parent.width
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {}
+
+            delegate: Row {
+                Text {
+                    width: table.getWidth(0)
+                    padding: table.padding
+                    text: modelData.modelName
+                }
+                Text {
+                    width: table.getWidth(1)
+                    padding: table.padding
+                    text: modelData.hostFriendlyName
+                }
+                Text {
+                    id: status
+                    width: table.getWidth(2)
+                    padding: table.padding
+                    text: qsTr('status-unknown')
+                }
+                CheckBox {
+                    property bool isOnline: false
+                    id: downloadCheckbox
+                    enabled: !autoDownloadCheckbox.checked && isOnline
+                    padding: table.padding
+                    width: table.getWidth(3)
+                    indicator.width: 15
+                    indicator.height: indicator.width
+                    indicator.implicitWidth: indicator.width
+                    indicator.implicitHeight: indicator.height
+                    onEnabledChanged: {
+                        if (!enabled) {
+                            checked = false;
+                            isOnline = false;
+                        }
+                    }
+                    onCheckedChanged: {
+                        startDownloadsButton.changed = startDownloadsButton.changed.filter(
+                            item => !(item.host === modelData.host && item.modelName === modelData.modelName)
+                        );
+                        startDownloadsButton.enabled = true;
+                        startDownloadsButton.changed.push({
+                            host: modelData.host,
+                            modelName: modelData.modelName,
+                            download: checked
+                        });
+                    }
+                }
+                CheckBox {
+                    id: autoDownloadCheckbox
+                    padding: table.padding
+                    width: table.getWidth(4)
+                    checked: modelData.autoDownload
+                    indicator.width: 15
+                    indicator.height: indicator.width
+                    indicator.implicitWidth: indicator.width
+                    indicator.implicitHeight: indicator.height
+                    onCheckedChanged: {
+                        if (checked) {
+                            settings.setModelData(modelData.host, modelData.modelName, checked);
+                        } else {
+                            if (typeof toBeStopped[modelData.host] === 'undefined') {
+                                toBeStopped[modelData.host] = {};
+                            }
+                            toBeStopped[modelData.host][modelData.modelName] = true;
+                        }
+                    }
+                }
+                Text {
+                    padding: table.padding
+                    width: table.getWidth(5)
+                    text: qsTr('table-header-delete')
+                    color: "red"
+                    font.underline: true
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            settings.deleteModel(modelData.host, modelData.modelName);
+                        }
+                    }
+                }
+
+                Timer {
+                    repeat: true
+                    interval: 1000
+                    running: true
+                    onTriggered: {
+                        if (
+                          typeof downloading[modelData.host] !== 'undefined'
+                          && typeof downloading[modelData.host][modelData.modelName] !== 'undefined'
+                        ) {
+                            status.text = qsTr('status-downloading');
+                            downloadCheckbox.isOnline = true;
+                        } else if (
+                            typeof webcamConfig[modelData.host] !== 'undefined'
+                            && typeof webcamConfig[modelData.host][modelData.modelName] !== 'undefined'
+                        ) {
+                            if (window.webcamConfig[modelData.host][modelData.modelName].isOnline) {
+                                status.text = qsTr('status-online');
+                                downloadCheckbox.isOnline = true;
+                            } else {
+                                status.text = qsTr('status-offline');
+                                downloadCheckbox.isOnline = false;
+                            }
+                        } else {
+                            status.text = qsTr('status-unknown');
+                            downloadCheckbox.isOnline = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Column {
+        anchors.top: modelsLabel.bottom
+        anchors.left: table.right
+        width: parent.width * 0.2
+        spacing: 10
+
         Text {
-            id: modelNotFound
+            text: qsTr("label-actions")
+            font.pixelSize: modelsLabel.font.pixelSize
+            font.bold: modelsLabel.font.bold
+        }
+
+        Button {
+            property var changed: []
+
+            id: startDownloadsButton
+            text: qsTr("button-start-downloads")
+            width: openDownloadsDirButton.width
+            onClicked: {
+                enabled = false;
+                for (const key in changed) {
+                    if (!changed.hasOwnProperty(key)) {
+                        continue;
+                    }
+
+                    const item = changed[key];
+                    if (item.download) {
+                        registry.startDownload(webcamConfig[item.host][item.modelName], settings.downloadDirectory);
+                    } else {
+                        registry.stopDownload(item.host, item.modelName);
+                    }
+                }
+                changed = [];
+            }
+        }
+
+        Button {
+            text: qsTr("button-stop-all-downloads");
+            width: openDownloadsDirButton.width
+            onClicked: {
+                startDownloadsButton.enabled = true;
+                const changed = [];
+                for (const host in downloading) {
+                    if (!downloading.hasOwnProperty(host)) {
+                        continue;
+                    }
+                    const models = Object.keys(downloading[host]);
+                    for (const modelName of models) {
+                        changed.push({host, modelName, download: true});
+                    }
+                }
+                startDownloadsButton.changed = changed;
+                registry.stopAllDownloads();
+                settings.autoDownloadsEnabled = false;
+            }
+        }
+
+        Button {
+            width: openDownloadsDirButton.width
+            text: settings.autoDownloadsEnabled
+                  ? qsTr('button-disable-autodownloads')
+                  : qsTr('button-enable-autodownloads')
+            onClicked: {
+                settings.autoDownloadsEnabled = !settings.autoDownloadsEnabled;
+            }
+        }
+
+        Button {
+            id: openDownloadsDirButton
+            text: qsTr('button-open-downloads')
+            onClicked: {
+                registry.openDirectory(settings.downloadDirectory);
+            }
+        }
+    }
+
+
+
+    Column {
+        visible: false
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: addModelRow.bottom
+        padding: 10
+        spacing: 10
+
+        Text {
+            id: modelNotFound2
             color: "red"
             opacity: 0
             text: qsTr("error-model-not-found")
@@ -209,260 +503,6 @@ ApplicationWindow {
         Row {
             width: parent.width
             spacing: 10
-
-            Column {
-                width: parent.width * 0.8 - parent.spacing
-                spacing: 20
-                Text {
-                    id: modelsLabel
-                    text: qsTr("label-models")
-                    font.pixelSize: 25
-                    font.bold: true
-                }
-
-
-                Column {
-                    property var model: []
-                    property var widths: [0.25, 0.2, 0.1, 0.15, 0.2, 0.2]
-                    property int padding: 5
-
-                    function getWidth(index) {
-                        return widths[index] * width - padding * 2;
-                    }
-
-                    id: table
-                    width: parent.width
-                    height: 100
-
-                    Row {
-                        Text {
-                            width: table.getWidth(0)
-                            padding: table.padding
-                            text: qsTr('table-header-model-name')
-                            font.bold: true
-                        }
-                        Text {
-                            width: table.getWidth(1)
-                            padding: table.padding
-                            text: qsTr('table-header-friendly-hostname')
-                            font.bold: true
-                        }
-                        Text {
-                            width: table.getWidth(2)
-                            padding: table.padding
-                            text: qsTr('table-header-status')
-                            font.bold: true
-                        }
-                        Text {
-                            width: table.getWidth(3)
-                            padding: table.padding
-                            text: qsTr('table-header-download')
-                            font.bold: true
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-                        Text {
-                            width: table.getWidth(4)
-                            padding: table.padding
-                            text: qsTr('table-header-auto-download')
-                            font.bold: true
-                            horizontalAlignment: Text.AlignHCenter
-                        }
-                        Text {
-                            width: table.getWidth(5)
-                            padding: table.padding
-                            text: qsTr('table-header-delete')
-                            font.bold: true
-                        }
-                    }
-
-                    Repeater {
-                        model: parent.model
-
-                        Row {
-                            Text {
-                                width: table.getWidth(0)
-                                padding: table.padding
-                                text: modelData.modelName
-                            }
-                            Text {
-                                width: table.getWidth(1)
-                                padding: table.padding
-                                text: modelData.hostFriendlyName
-                            }
-                            Text {
-                                id: status
-                                width: table.getWidth(2)
-                                padding: table.padding
-                                text: qsTr('status-unknown')
-                            }
-                            CheckBox {
-                                property bool isOnline: false
-                                id: downloadCheckbox
-                                enabled: !autoDownloadCheckbox.checked && isOnline
-                                padding: table.padding
-                                width: table.getWidth(3)
-                                indicator.width: 15
-                                indicator.height: indicator.width
-                                indicator.implicitWidth: indicator.width
-                                indicator.implicitHeight: indicator.height
-                                onEnabledChanged: {
-                                    if (!enabled) {
-                                        checked = false;
-                                        isOnline = false;
-                                    }
-                                }
-                                onCheckedChanged: {
-                                    startDownloadsButton.changed = startDownloadsButton.changed.filter(
-                                        item => !(item.host === modelData.host && item.modelName === modelData.modelName)
-                                    );
-                                    startDownloadsButton.enabled = true;
-                                    startDownloadsButton.changed.push({
-                                        host: modelData.host,
-                                        modelName: modelData.modelName,
-                                        download: checked
-                                    });
-                                }
-                            }
-                            CheckBox {
-                                id: autoDownloadCheckbox
-                                padding: table.padding
-                                width: table.getWidth(4)
-                                checked: modelData.autoDownload
-                                indicator.width: 15
-                                indicator.height: indicator.width
-                                indicator.implicitWidth: indicator.width
-                                indicator.implicitHeight: indicator.height
-                                onCheckedChanged: {
-                                    if (checked) {
-                                        settings.setModelData(modelData.host, modelData.modelName, checked);
-                                    } else {
-                                        if (typeof toBeStopped[modelData.host] === 'undefined') {
-                                            toBeStopped[modelData.host] = {};
-                                        }
-                                        toBeStopped[modelData.host][modelData.modelName] = true;
-                                    }
-                                }
-                            }
-                            Text {
-                                padding: table.padding
-                                width: table.getWidth(5)
-                                text: qsTr('table-header-delete')
-                                color: "red"
-                                font.underline: true
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        settings.deleteModel(modelData.host, modelData.modelName);
-                                    }
-                                }
-                            }
-
-                            Timer {
-                                repeat: true
-                                interval: 1000
-                                running: true
-                                onTriggered: {
-                                    if (
-                                      typeof downloading[modelData.host] !== 'undefined'
-                                      && typeof downloading[modelData.host][modelData.modelName] !== 'undefined'
-                                    ) {
-                                        status.text = qsTr('status-downloading');
-                                        downloadCheckbox.isOnline = true;
-                                    } else if (
-                                        typeof webcamConfig[modelData.host] !== 'undefined'
-                                        && typeof webcamConfig[modelData.host][modelData.modelName] !== 'undefined'
-                                    ) {
-                                        if (window.webcamConfig[modelData.host][modelData.modelName].isOnline) {
-                                            status.text = qsTr('status-online');
-                                            downloadCheckbox.isOnline = true;
-                                        } else {
-                                            status.text = qsTr('status-offline');
-                                            downloadCheckbox.isOnline = false;
-                                        }
-                                    } else {
-                                        status.text = qsTr('status-unknown');
-                                        downloadCheckbox.isOnline = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            Column {
-                width: parent.width * 0.2
-                spacing: 10
-
-                Text {
-                    text: qsTr("label-actions")
-                    font.pixelSize: modelsLabel.font.pixelSize
-                    font.bold: modelsLabel.font.bold
-                }
-
-                Button {
-                    property var changed: []
-
-                    id: startDownloadsButton
-                    text: qsTr("button-start-downloads")
-                    width: openDownloadsDirButton.width
-                    onClicked: {
-                        enabled = false;
-                        for (const key in changed) {
-                            if (!changed.hasOwnProperty(key)) {
-                                continue;
-                            }
-
-                            const item = changed[key];
-                            if (item.download) {
-                                registry.startDownload(webcamConfig[item.host][item.modelName], settings.downloadDirectory);
-                            } else {
-                                registry.stopDownload(item.host, item.modelName);
-                            }
-                        }
-                        changed = [];
-                    }
-                }
-
-                Button {
-                    text: qsTr("button-stop-all-downloads");
-                    width: openDownloadsDirButton.width
-                    onClicked: {
-                        startDownloadsButton.enabled = true;
-                        const changed = [];
-                        for (const host in downloading) {
-                            if (!downloading.hasOwnProperty(host)) {
-                                continue;
-                            }
-                            const models = Object.keys(downloading[host]);
-                            for (const modelName of models) {
-                                changed.push({host, modelName, download: true});
-                            }
-                        }
-                        startDownloadsButton.changed = changed;
-                        registry.stopAllDownloads();
-                        settings.autoDownloadsEnabled = false;
-                    }
-                }
-
-                Button {
-                    width: openDownloadsDirButton.width
-                    text: settings.autoDownloadsEnabled
-                          ? qsTr('button-disable-autodownloads')
-                          : qsTr('button-enable-autodownloads')
-                    onClicked: {
-                        settings.autoDownloadsEnabled = !settings.autoDownloadsEnabled;
-                    }
-                }
-
-                Button {
-                    id: openDownloadsDirButton
-                    text: qsTr('button-open-downloads')
-                    onClicked: {
-                        registry.openDirectory(settings.downloadDirectory);
-                    }
-                }
-            }
         }
     }
 
