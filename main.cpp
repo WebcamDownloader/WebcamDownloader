@@ -73,8 +73,15 @@ int main(int argc, char *argv[])
     app.setOrganizationName("WebcamDownloader");
     app.setOrganizationDomain("WebcamDownloader");
 
+    auto settings = new Settings(false, &app);
+
+    QString language = settings->language();
+    if (language.isEmpty()) {
+        language = QLocale::system().name();
+    }
+
     QTranslator translator;
-    if (!translator.load("WebcamDownloader_" + QLocale::system().name(), ":/translations")) {
+    if (!translator.load("WebcamDownloader_" + language, ":/translations")) {
         translator.load("WebcamDownloader_en_US", ":/translations");
     }
     app.installTranslator(&translator);
@@ -88,7 +95,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     qmlRegisterType<WebcamRegistry>("webcam.downloader", 1, 0, "WebcamRegistry");
     qmlRegisterType<NewVersionChecker>("webcam.downloader", 1, 0, "NewVersionChecker");
-    engine.rootContext()->setContextProperty("settings", new Settings(false, &app));
+    engine.rootContext()->setContextProperty("settings", settings);
     engine.load(url);
 
     return app.exec();

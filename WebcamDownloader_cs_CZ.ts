@@ -128,6 +128,16 @@
         <source>button-browse-files</source>
         <translation>Procházet</translation>
     </message>
+    <message>
+        <location filename="Settings.qml" line="112"/>
+        <source>option-language</source>
+        <translation>Jazyk (vyžaduje restart aplikace)</translation>
+    </message>
+    <message>
+        <location filename="Settings.qml" line="118"/>
+        <source>option-language-system</source>
+        <translation>Jazyk systému</translation>
+    </message>
 </context>
 <context>
     <name>main</name>

@@ -16,6 +16,7 @@ class Settings : public QObject
     Q_PROPERTY(bool autoDownloadsEnabled READ autoDownloadsEnabled WRITE setAutoDownloadsEnabled NOTIFY autoDownloadsEnabledChanged)
     Q_PROPERTY(QString downloadDirectory READ downloadDirectory WRITE setDownloadDirectory NOTIFY downloadDirectoryChanged)
     Q_PROPERTY(bool checkForNewVersions READ checkForNewVersions WRITE setCheckForNewVersions NOTIFY checkForNewVersionsChanged)
+    Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
 public:
     explicit Settings(QObject *parent = nullptr);
     explicit Settings(bool readOnly, QObject *parent = nullptr);
@@ -29,11 +30,15 @@ public:
     bool checkForNewVersions();
     void setCheckForNewVersions(bool check);
 
+    QString language();
+    void setLanguage(QString language);
+
 signals:
     void modelsUpdated();
     void autoDownloadsEnabledChanged();
     void downloadDirectoryChanged();
     void checkForNewVersionsChanged();
+    void languageChanged();
 
 public slots:
     QVariantList getModels(QString host);

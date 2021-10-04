@@ -201,6 +201,29 @@ void Settings::setCheckForNewVersions(bool check)
     }
 }
 
+QString Settings::language()
+{
+    settings->beginGroup("app_settings");
+    auto language = settings->value("language", "").toString();
+    settings->endGroup();
+
+    return language;
+}
+
+void Settings::setLanguage(QString language)
+{
+    if (isReadOnly) {
+        return;
+    }
+
+    if (language != this->language()) {
+        settings->beginGroup("app_settings");
+        settings->setValue("language", language);
+        settings->endGroup();
+        emit languageChanged();
+    }
+}
+
 bool Settings::autoDownloadsEnabled()
 {
     settings->beginGroup("app_settings");

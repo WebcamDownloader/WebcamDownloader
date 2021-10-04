@@ -105,5 +105,35 @@ ApplicationWindow {
                 }
             }
         }
+
+        Row {
+            spacing: parent.spacing
+            Label {
+                text: qsTr('option-language')
+                height: optionCloseToTray.height
+                verticalAlignment: Text.AlignVCenter
+            }
+            ComboBox {
+                id: optionLanguage
+                model: [{text: qsTr('option-language-system'), value: ''}, {text: 'English', value: 'en_US'}, {text: 'Čeština', value: 'cs_CZ'}]
+                textRole: "text"
+                valueRole: "value"
+                currentIndex: {
+                    const val = settings.language;
+                    let index = 0;
+                    for (const option of model) {
+                        if (option.value === val) {
+                            return index;
+                        }
+
+                        ++index;
+                    }
+                    return -1;
+                }
+                onActivated: {
+                    settings.language = currentValue;
+                }
+            }
+        }
     }
 }

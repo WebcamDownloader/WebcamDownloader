@@ -129,6 +129,16 @@
         <source>button-browse-files</source>
         <translation>Browse</translation>
     </message>
+    <message>
+        <location filename="Settings.qml" line="112"/>
+        <source>option-language</source>
+        <translation>Language (requires app restart)</translation>
+    </message>
+    <message>
+        <location filename="Settings.qml" line="118"/>
+        <source>option-language-system</source>
+        <translation>System Language</translation>
+    </message>
 </context>
 <context>
     <name>main</name>
