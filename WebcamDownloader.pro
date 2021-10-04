@@ -40,7 +40,8 @@ SOURCES += \
 RESOURCES += qml.qrc translations.qrc
 
 TRANSLATIONS += \
-    WebcamDownloader_en_US.ts
+    WebcamDownloader_en_US.ts \
+    WebcamDownloader_cs_CZ.ts
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
