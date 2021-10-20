@@ -92,6 +92,8 @@ jobs:
       matrix:
         version: ['18.04', '20.04']
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
       - name: Download GUI
         uses: actions/download-artifact@v2
         with:
@@ -104,13 +106,9 @@ jobs:
           name: WebcamDownloaderLinux_${{ matrix.version }}_cli_only
           path: cli
         continue-on-error: true
-      - name: Checkout Code
-        uses: actions/checkout@v2
       - name: Create Package
         run: |
           mkdir -p debian/usr/share/WebcamDownloader
-          ls -lah gui
-          ls -lah cli
           mv gui/WebcamDownloader debian/usr/share/WebcamDownloader
           mv cli/WebcamDownloader debian/usr/share/WebcamDownloader/webcam-downloader-cli
           chmod +x debian/usr/share/WebcamDownloader/*
