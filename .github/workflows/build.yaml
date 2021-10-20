@@ -104,6 +104,8 @@ jobs:
           name: WebcamDownloaderLinux_${{ matrix.version }}_cli_only
           path: cli
         continue-on-error: true
+      - name: Checkout Code
+        uses: actions/checkout@v2
       - name: Create Package
         run: |
           mkdir -p debian/usr/share/WebcamDownloader
