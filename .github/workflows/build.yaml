@@ -72,6 +72,7 @@ jobs:
         run: |
           echo "QT -= quick quickcontrols2 gui" >> WebcamDownloader.pro
           echo "DEFINES += NO_GUI" >> WebcamDownloader.pro
+          echo "DEFINES += QAPPLICATION_CLASS=QCoreApplication" >> WebcamDownloader.pro
       - name: Compile App
         run: lrelease WebcamDownloader.pro && qmake && make
       - name: Create Artifact
