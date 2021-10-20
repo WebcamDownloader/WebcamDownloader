@@ -83,11 +83,53 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  create_deb_packages:
+    name: DEB packages
+    runs-on: ubuntu-latest
+    needs:
+      - build_ubuntu
+    strategy:
+      matrix:
+        version: ['18.04', '20.04']
+    steps:
+      - name: Download GUI
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_${{ matrix.version }}
+          path: gui
+        continue-on-error: true
+      - name: Download CLI
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloaderLinux_${{ matrix.version }}_cli_only
+          path: cli
+        continue-on-error: true
+      - name: Create Package
+        run: |
+          mkdir -p debian/usr/share/WebcamDownloader
+          mv gui/WebcamDownloader debian/usr/share/WebcamDownloader
+          mv cli/WebcamDownloader debian/usr/share/WebcamDownloader/webcam-downloader-cli
+          chmod +x debian/usr/share/WebcamDownloader/*
+          chmod +x debian/usr/share/applications/*
+          chmod +x debian/usr/local/bin/*
+          cp icon.png debian/usr/share/WebcamDownloader
+          mv debian WebcamDownloader
+          dpkg-deb --build --root-owner-group WebcamDownloader
+          mv WebcamDownloader.deb WebcamDownloader_${{ matrix.version }}.deb
+      - name: Create Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: WebcamDownloader_${{ matrix.version }}.deb
+          path: WebcamDownloader_${{ matrix.version }}.deb
+          if-no-files-found: error
+          retention-days: 7
+
   release:
     name: Release
     needs:
       - build_windows
       - build_ubuntu
+      - create_deb_package
     runs-on: ubuntu-latest
     steps:
       - name: Download Windows
@@ -106,6 +148,10 @@ jobs:
         with:
           name: WebcamDownloaderLinux_18.04_cli_only
           path: 18.04_cli
+      - name: Download Ubuntu 18.04 (DEB)
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloader_18.04.deb
         continue-on-error: true
       - name: Download Ubuntu 20.04 (GUI)
         uses: actions/download-artifact@v2
@@ -119,6 +165,10 @@ jobs:
           name: WebcamDownloaderLinux_20.04_cli_only
           path: 20.04_cli
         continue-on-error: true
+      - name: Download Ubuntu 20.04 (DEB)
+        uses: actions/download-artifact@v2
+        with:
+          name: WebcamDownloader_20.04.deb
       - name: Rename Files
         run: |
           mv 18.04_gui/WebcamDownloader WebcamDownloaderLinux_18.04_gui
@@ -154,6 +204,8 @@ jobs:
             WebcamDownloaderLinux_18.04_cli
             WebcamDownloaderLinux_20.04_gui
             WebcamDownloaderLinux_20.04_cli
+            WebcamDownloader_18.04.deb
+            WebcamDownloader_20.04.deb
   docker:
     name: Create Docker
     needs:

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir -p "$HOME/.WebcamDownloader"
+WEBCAM_DOWNLOADER_OPTIONS_DIR=$HOME/.WebcamDownloader /usr/share/WebcamDownloader/webcam-downloader-cli "$@"

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.4.1
+Type=Application
+Terminal=false
+Exec=/usr/local/bin/WebcamDownloader
+Name=Webcam Downloader
+Icon=/usr/share/WebcamDownloader/icon.png
