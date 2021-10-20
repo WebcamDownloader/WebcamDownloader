@@ -109,6 +109,8 @@ jobs:
       - name: Create Package
         run: |
           mkdir -p debian/usr/share/WebcamDownloader
+          ls -lah gui
+          ls -lah cli
           mv gui/WebcamDownloader debian/usr/share/WebcamDownloader
           mv cli/WebcamDownloader debian/usr/share/WebcamDownloader/webcam-downloader-cli
           chmod +x debian/usr/share/WebcamDownloader/*
