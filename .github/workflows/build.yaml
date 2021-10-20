@@ -129,7 +129,7 @@ jobs:
     needs:
       - build_windows
       - build_ubuntu
-      - create_deb_package
+      - create_deb_packages
     runs-on: ubuntu-latest
     steps:
       - name: Download Windows
