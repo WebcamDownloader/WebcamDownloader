@@ -12,6 +12,8 @@
 #include <QTimer>
 #include <QTextStream>
 
+#include <SingleApplication>
+
 #include "webcamregistry.h"
 #include "webcaminfo.h"
 #include "settings.h"
@@ -57,18 +59,11 @@ int main(int argc, char *argv[])
     ShowWindow(GetConsoleWindow(), SW_HIDE);
 #endif
     }
-
-    // todo: protect against crashes once Linux version is released
-    QSharedMemory lock("71AD6F2B-13BF-425C-9455-B0569B79C600"); // same uuid as in installer
-    if (!lock.create(512, QSharedMemory::ReadWrite)) {
-        return -42;
-    }
-
 #ifndef NO_GUI
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    SingleApplication app(argc, argv);
     qRegisterMetaType<WebcamInfo>("WebcamInfo");
     app.setOrganizationName("WebcamDownloader");
     app.setOrganizationDomain("WebcamDownloader");
