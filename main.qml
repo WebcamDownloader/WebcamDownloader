@@ -536,7 +536,7 @@ ApplicationWindow {
         id: nonAutoDownloadTimer
         repeat: true
         running: true
-        interval: 2 * 10 * 1000 // two minutes
+        interval: 60 * 1000 // one minute
         onTriggered: {
             updateStatuses(false);
         }
