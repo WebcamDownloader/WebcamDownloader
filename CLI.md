@@ -12,12 +12,12 @@ You can also use a docker image instead of downloading the binary if the app doe
 
 To save your config across runs, mount a directory that points to `/app/config`:
 
-`docker run --rm -it -v /path/to/my/config/dir:/app/config webcamdownloader/webcam-downloader:latest`
+`docker run --rm -it -v $HOME/.WebcamDownloader:/app/config webcamdownloader/webcam-downloader:latest`
 
 You can set an alias to this command and then use the subcommands, for example:
 
 ```bash
-alias WebcamDownloader='docker run --rm -it -v /path/to/my/config/dir:/app/config webcamdownloader/webcam-downloader:latest'
+alias WebcamDownloader='docker run --rm -it -v $HOME/.WebcamDownloader:/app/config webcamdownloader/webcam-downloader:latest'
 WebcamDownloader models --format json
 ```
 
