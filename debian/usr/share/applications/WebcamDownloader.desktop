@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Version=0.4.3
+Version=0.4.4
 Type=Application
 Terminal=false
 Exec=/usr/local/bin/WebcamDownloader
