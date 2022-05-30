@@ -55,7 +55,7 @@ WebcamInfo StripchatHost::getModelInfo(QString urlOrName)
             .toObject()
             .value("flashphoner-hls")
             .toString();
-    auto streamUrl = QString("https://b-%1.stripst.com/hls/%2/%2.m3u8")
+    auto streamUrl = QString("https://b-%1.doppiocdn.com/hls/%2/%2.m3u8")
             .arg(hlsServer)
             .arg(id);
     auto available = document.value("cam").toObject().value("isCamAvailable").toBool();
