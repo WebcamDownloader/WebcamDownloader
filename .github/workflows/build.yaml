@@ -87,7 +87,7 @@ jobs:
           mv WebcamDownloader WebcamDownloader.AppDir/usr/bin
           cp -r $QML2_IMPORT_PATH/* WebcamDownloader.AppDir/usr/qml
       - name: Create AppImage
-        run: /opt/tools/linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir=WebcamDownloader.AppDir --plugin qt --output appimage -v
+        run: ./linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir=WebcamDownloader.AppDir --plugin qt --output appimage -v
       - name: Create Artifact
         uses: actions/upload-artifact@v4
         with:
