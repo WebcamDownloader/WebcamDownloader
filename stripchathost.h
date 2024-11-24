@@ -21,6 +21,9 @@ public:
     QString getCodeName() override;
     WebcamInfo getModelInfo(QString urlOrName) override;
     QString getRefererBase() override;
+
+private:
+    const QString randomString();
 };
 
 #endif // STRIPCHATHOST_H

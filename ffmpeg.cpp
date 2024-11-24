@@ -16,6 +16,13 @@ void Ffmpeg::startDownload(WebcamInfo webcamInfo, QString directory)
     if (hasDownload(webcamInfo)) {
         return;
     }
+
+#ifdef Q_OS_LINUX
+    if (!directory.startsWith("/")) {
+        directory = "/" + directory;
+    }
+#endif
+
     QString host = webcamInfo.host();
     QString modelName = webcamInfo.modelName();
 
@@ -24,6 +31,7 @@ void Ffmpeg::startDownload(WebcamInfo webcamInfo, QString directory)
             + "/" + modelName
             + "-" + datetime.toString("yyyy_MM_dd-hh_mm_ss")
             + ".ts";
+
     QString ffmpegPath = outPath;
 #ifdef Q_OS_WIN
     ffmpegPath = ffmpegPath.replace("/", "\\");
@@ -39,6 +47,7 @@ void Ffmpeg::startDownload(WebcamInfo webcamInfo, QString directory)
                 << "-c" << "copy"
                 << ffmpegPath
     );
+
     connect(process, &QProcess::started, this, [this, host, modelName]() {
         emit downloadStarted(host, modelName);
     });

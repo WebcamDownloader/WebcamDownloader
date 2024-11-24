@@ -1,5 +1,7 @@
 #include "stripchathost.h"
 
+#include <QJsonArray>
+
 StripchatHost::StripchatHost(QObject *parent) : WebcamHost(parent)
 {
 
@@ -32,37 +34,74 @@ WebcamInfo StripchatHost::getModelInfo(QString urlOrName)
     } else {
         username = urlOrName;
     }
-    QUrl detailsUrl("https://stripchat.com/api/front/v2/models/username/" + username + "/cam");
 
+    QUrl searchUrl("https://stripchat.com/api/front/v4/models/search/suggestion?query=" + username.toLower() + "&limit=1&primaryTag=girls&uniq=" + randomString());
     QEventLoop eventLoop;
     QNetworkAccessManager manager;
-    QNetworkRequest request(detailsUrl);
-    request.setHeader(QNetworkRequest::KnownHeaders::UserAgentHeader, userAgentGenerator.getRandomUserAgent());
-    request.setRawHeader("Referer", "https://stripchat.com");
-    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::RedirectPolicy::NoLessSafeRedirectPolicy);
-    auto reply = manager.get(request);
-    connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+    QNetworkRequest searchRequest(searchUrl);
+    searchRequest.setHeader(QNetworkRequest::KnownHeaders::UserAgentHeader, userAgentGenerator.getRandomUserAgent());
+    searchRequest.setRawHeader("Referer", "https://stripchat.com");
+    searchRequest.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::RedirectPolicy::NoLessSafeRedirectPolicy);
+    auto searchReply = manager.get(searchRequest);
+    connect(searchReply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
     eventLoop.exec();
-    reply->deleteLater();
+    searchReply->deleteLater();
 
-    auto document = QJsonDocument::fromJson(reply->readAll()).object();
-    auto id = document.value("cam").toObject().value("streamName").toString();
-    auto name = document.value("user").toObject().value("user").toObject().value("login").toString();
-    auto hlsServer = document
-            .value("cam")
-            .toObject()
-            .value("viewServers")
-            .toObject()
-            .value("flashphoner-hls")
-            .toString();
-    auto streamUrl = QString("https://b-%1.doppiocdn.com/hls/%2/%2.m3u8")
-            .arg(hlsServer)
-            .arg(id);
-    auto available = document.value("cam").toObject().value("isCamAvailable").toBool();
+    auto document = QJsonDocument::fromJson(searchReply->readAll()).object();
+    auto models = document.value("models").toArray();
+    if (models.size() < 1) {
+        return WebcamInfo(getCodeName(), username, false, QUrl(), true);
+    }
+    auto model = models.at(0).toObject();
+    if (model.value("username").toString() != username) {
+        return WebcamInfo(getCodeName(), username, false, QUrl(), true);
+    }
+
+    auto id = model.value("id").toInt();
+    auto name = model.value("username").toString();
+    auto available = model.value("isOnline").toBool();
+
+    QNetworkRequest initializeRequest(QUrl("https://stripchat.com/api/front/v3/config/initial?timezoneOffset=-60&timezone=Europe%2FPrague&requestPath=%2F" + username + "&defaultTag=girls"));
+    initializeRequest.setHeader(QNetworkRequest::KnownHeaders::UserAgentHeader, userAgentGenerator.getRandomUserAgent());
+    initializeRequest.setRawHeader("Referer", "https://stripchat.com");
+    initializeRequest.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::RedirectPolicy::NoLessSafeRedirectPolicy);
+    auto initializeReply = manager.get(initializeRequest);
+    connect(initializeReply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
+    initializeReply->deleteLater();
+
+    auto initializeDocument = QJsonDocument::fromJson(initializeReply->readAll()).object();
+    auto common = initializeDocument.value("initial").toObject().value("common").toObject();
+    auto urlTemplate = common.value("hlsStreamUrlTemplate").toString();
+    const auto defaultHost = common.value("defaultHlsStreamHost").toString();
+    const auto streamUrl = urlTemplate
+        .replace("{cdnHost}", defaultHost)
+        .replace("{streamName}", QString::number(id))
+        .replace("{suffix}", "_auto")
+    ;
+
     return WebcamInfo(getCodeName(), name, available, streamUrl, name.isEmpty());
 }
 
 QString StripchatHost::getRefererBase()
 {
     return "https://stripchat.com/";
+}
+
+const QString StripchatHost::randomString()
+{
+    constexpr int length = 16;
+
+    const QString charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+    QString result;
+    result.reserve(length);
+
+    QRandomGenerator *random = QRandomGenerator::global();
+
+    for (int i = 0; i < length; ++i) {
+        int index = random->bounded(charset.size());
+        result.append(charset.at(index));
+    }
+
+    return result;
 }
