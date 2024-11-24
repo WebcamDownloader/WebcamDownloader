@@ -52,8 +52,10 @@ jobs:
           submodules: recursive
       - name: Set variables
         run: |
+          export QT_DIR=/opt/qt515
+          
           echo "/opt/qt515/bin" >> "$GITHUB_PATH"
-          echo "QT_DIR=/opt/qt515" >> "$GITHUB_ENV"
+          echo "QT_DIR=$QT_DIR" >> "$GITHUB_ENV"
           echo "QML2_IMPORT_PATH=$QT_DIR/qml" >> "$GITHUB_ENV"
           echo "LD_LIBRARY_PATH=$QT_DIR/lib:$LD_LIBRARY_PATH" >> "$GITHUB_ENV"
           echo "PATH=$QT_DIR/bin:$PATH" >> "$GITHUB_ENV"
