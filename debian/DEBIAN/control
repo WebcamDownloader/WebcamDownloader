@@ -1,7 +1,0 @@
-Package: WebcamDownloader
-Version: 0.4.4
-Architecture: amd64
-Maintainer: WebcamDownloader
-Description: Webcam downloader for various webcam sites
-Section: video
-Depends: ffmpeg, libxcb-xinerama0 (>= 1)

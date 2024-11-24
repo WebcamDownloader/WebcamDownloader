@@ -40,8 +40,61 @@ jobs:
             WebcamDownloader.zip
           if-no-files-found: error
           retention-days: 7
-#
-#  build_ubuntu:
+
+  build_linux:
+    name: Linux
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Set variables
+        run: |
+          export PATH="/opt/qt515/bin:$PATH"
+          export QT_DIR=/opt/qt515
+          export QML2_IMPORT_PATH=$QT_DIR/qml
+          export LD_LIBRARY_PATH=$QT_DIR/lib:$LD_LIBRARY_PATH
+          export PATH=$QT_DIR/bin:$PATH
+      - name: Add Qt repo
+        run: add-apt-repository ppa:beineri/opt-qt-5.15.2-focal -y
+      - name: Install dependencies
+        run: |
+          apt-get update && apt-get install -y appstream build-essential libgl1-mesa-dev fuse \
+          qt515base qt515declarative qt515quickcontrols qt515quickcontrols2 qt515tools \
+          wget zlib1g-dev
+      - name: Download tools
+        run: |
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage 
+          chmod +x linuxdeploy-x86_64.AppImage
+          wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy-plugin-qt-x86_64.AppImage
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+      - name: Build app
+        run: lrelease WebcamDownloader.pro && qmake && make
+      - name: Prepare directory
+        run: |
+          mkdir -p WebcamDownloader.AppDir/usr/share/applications
+          mkdir -p WebcamDownloader.AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p WebcamDownloader.AppDir/usr/qml
+          mkdir -p WebcamDownloader.AppDir/usr/bin
+          cp webcam-downloader.desktop WebcamDownloader.AppDir/usr/share/applications
+          cp icon.png WebcamDownloader.AppDir/usr/share/icons/hicolor/256x256/apps/webcam-downloader.png
+          mv WebcamDownloader WebcamDownloader.AppDir/usr/bin
+          cp -r $QML2_IMPORT_PATH/* WebcamDownloader.AppDir/usr/qml
+      - name: Create AppImage
+        run: /opt/tools/linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir=WebcamDownloader.AppDir --plugin qt --output appimage -v
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WebcamDownloaderLinux
+          path: WebcamDownloader-x86_64.AppImage
+          if-no-files-found: error
+          retention-days: 7
+
+  #  build_ubuntu:
 #    name: Ubuntu
 #    runs-on: ubuntu-latest
 #    strategy:

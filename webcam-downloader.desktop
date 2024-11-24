@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=WebcamDownloader
+Exec=webcam-downloader
+Icon=webcam-downloader
+Type=Application
+Categories=Utility;
