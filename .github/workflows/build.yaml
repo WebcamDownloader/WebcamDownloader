@@ -84,7 +84,7 @@ jobs:
           mkdir -p WebcamDownloader.AppDir/usr/bin
           cp webcam-downloader.desktop WebcamDownloader.AppDir/usr/share/applications
           cp icon.png WebcamDownloader.AppDir/usr/share/icons/hicolor/256x256/apps/webcam-downloader.png
-          mv WebcamDownloader WebcamDownloader.AppDir/usr/bin
+          mv WebcamDownloader WebcamDownloader.AppDir/usr/bin/webcam-downloader
           cp -r $QML2_IMPORT_PATH/* WebcamDownloader.AppDir/usr/qml
       - name: Create AppImage
         run: ./linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir=WebcamDownloader.AppDir --plugin qt --output appimage
