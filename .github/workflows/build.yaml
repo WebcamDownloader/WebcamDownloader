@@ -17,7 +17,7 @@ jobs:
           lfs: true
           submodules: recursive
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v4
         with:
           version: '5.15.2'
           arch: win64_mingw81
@@ -32,7 +32,7 @@ jobs:
       - name: Create Zip
         run: 7z a WebcamDownloader.zip ..\WebcamDownloader-Release
       - name: Create Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: WebcamDownloaderWindows
           path: |
@@ -64,7 +64,7 @@ jobs:
           TZ: Europe/London
         run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Disable GUI
@@ -76,7 +76,7 @@ jobs:
       - name: Compile App
         run: lrelease WebcamDownloader.pro && qmake && make
       - name: Create Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: WebcamDownloaderLinux_${{ matrix.osVersion }}${{ matrix.suffix }}
           path: WebcamDownloader
@@ -93,15 +93,15 @@ jobs:
         version: ['18.04', '20.04']
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Download GUI
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderLinux_${{ matrix.version }}
           path: gui
         continue-on-error: true
       - name: Download CLI
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderLinux_${{ matrix.version }}_cli_only
           path: cli
@@ -119,7 +119,7 @@ jobs:
           dpkg-deb --build --root-owner-group WebcamDownloader
           mv WebcamDownloader.deb WebcamDownloader_${{ matrix.version }}.deb
       - name: Create Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: WebcamDownloader_${{ matrix.version }}.deb
           path: WebcamDownloader_${{ matrix.version }}.deb
@@ -135,40 +135,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Windows
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderWindows
         continue-on-error: true
       - name: Download Ubuntu 18.04 (GUI)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderLinux_18.04
           path: 18.04_gui
         continue-on-error: true
       - name: Download Ubuntu 18.04 (CLI)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderLinux_18.04_cli_only
           path: 18.04_cli
       - name: Download Ubuntu 18.04 (DEB)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloader_18.04.deb
         continue-on-error: true
       - name: Download Ubuntu 20.04 (GUI)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderLinux_20.04
           path: 20.04_gui
         continue-on-error: true
       - name: Download Ubuntu 20.04 (CLI)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderLinux_20.04_cli_only
           path: 20.04_cli
         continue-on-error: true
       - name: Download Ubuntu 20.04 (DEB)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloader_20.04.deb
       - name: Rename Files
@@ -179,13 +179,13 @@ jobs:
           mv 20.04_cli/WebcamDownloader WebcamDownloaderLinux_20.04_cli
       - name: Extract Version Name
         id: extract_name
-        uses: actions/github-script@v4
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
             return context.payload.ref.replace(/refs\/tags\//, '');
       - name: Create a Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -216,28 +216,28 @@ jobs:
     steps:
       - name: Extract Version Name
         id: extract_name
-        uses: actions/github-script@v4
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
             return context.payload.ref.replace(/refs\/tags\/v/, '');
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Download Binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WebcamDownloaderLinux_20.04_cli_only
       - name: Move Binary
         run: mv WebcamDownloader docker/WebcamDownloaderLinux_20.04_cli
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: webcamdownloader
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Build and Push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
