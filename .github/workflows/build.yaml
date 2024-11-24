@@ -40,98 +40,98 @@ jobs:
             WebcamDownloader.zip
           if-no-files-found: error
           retention-days: 7
-
-  build_ubuntu:
-    name: Ubuntu
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        imageVersion: [ '5.12', '5.15.1' ]
-        gui: [ gui, no-gui ]
-        include:
-          - imageVersion: '5.12'
-            osVersion: '18.04'
-          - imageVersion: '5.15.1'
-            osVersion: '20.04'
-          - gui: gui
-            suffix: ''
-          - gui: no-gui
-            suffix: _cli_only
-    container: rikudousage/qt-static:${{ matrix.imageVersion }}
-    steps:
-      - name: Install Git
-        env:
-          TZ: Europe/London
-        run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Disable GUI
-        if: ${{ matrix.gui == 'no-gui' }}
-        run: |
-          echo "QT -= quick quickcontrols2 gui" >> WebcamDownloader.pro
-          echo "DEFINES += NO_GUI" >> WebcamDownloader.pro
-          echo "DEFINES += QAPPLICATION_CLASS=QCoreApplication" >> WebcamDownloader.pro
-      - name: Compile App
-        run: lrelease WebcamDownloader.pro && qmake && make
-      - name: Create Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_${{ matrix.osVersion }}${{ matrix.suffix }}
-          path: WebcamDownloader
-          if-no-files-found: error
-          retention-days: 7
-
-  create_deb_packages:
-    name: DEB packages
-    runs-on: ubuntu-latest
-    needs:
-      - build_ubuntu
-    strategy:
-      matrix:
-        version: ['18.04', '20.04']
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      - name: Download GUI
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_${{ matrix.version }}
-          path: gui
-        continue-on-error: true
-      - name: Download CLI
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_${{ matrix.version }}_cli_only
-          path: cli
-        continue-on-error: true
-      - name: Create Package
-        run: |
-          mkdir -p debian/usr/share/WebcamDownloader
-          mv gui/WebcamDownloader debian/usr/share/WebcamDownloader
-          mv cli/WebcamDownloader debian/usr/share/WebcamDownloader/webcam-downloader-cli
-          chmod +x debian/usr/share/WebcamDownloader/*
-          chmod +x debian/usr/share/applications/*
-          chmod +x debian/usr/local/bin/*
-          cp icon.png debian/usr/share/WebcamDownloader
-          mv debian WebcamDownloader
-          dpkg-deb --build --root-owner-group WebcamDownloader
-          mv WebcamDownloader.deb WebcamDownloader_${{ matrix.version }}.deb
-      - name: Create Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WebcamDownloader_${{ matrix.version }}.deb
-          path: WebcamDownloader_${{ matrix.version }}.deb
-          if-no-files-found: error
-          retention-days: 7
+#
+#  build_ubuntu:
+#    name: Ubuntu
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        imageVersion: [ '5.12', '5.15.1' ]
+#        gui: [ gui, no-gui ]
+#        include:
+#          - imageVersion: '5.12'
+#            osVersion: '18.04'
+#          - imageVersion: '5.15.1'
+#            osVersion: '20.04'
+#          - gui: gui
+#            suffix: ''
+#          - gui: no-gui
+#            suffix: _cli_only
+#    container: rikudousage/qt-static:${{ matrix.imageVersion }}
+#    steps:
+#      - name: Install Git
+#        env:
+#          TZ: Europe/London
+#        run: apt-get update && apt-get -y install software-properties-common && add-apt-repository -y ppa:git-core/ppa && apt-get update && apt-get -y install git
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#        with:
+#          submodules: recursive
+#      - name: Disable GUI
+#        if: ${{ matrix.gui == 'no-gui' }}
+#        run: |
+#          echo "QT -= quick quickcontrols2 gui" >> WebcamDownloader.pro
+#          echo "DEFINES += NO_GUI" >> WebcamDownloader.pro
+#          echo "DEFINES += QAPPLICATION_CLASS=QCoreApplication" >> WebcamDownloader.pro
+#      - name: Compile App
+#        run: lrelease WebcamDownloader.pro && qmake && make
+#      - name: Create Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_${{ matrix.osVersion }}${{ matrix.suffix }}
+#          path: WebcamDownloader
+#          if-no-files-found: error
+#          retention-days: 7
+#
+#  create_deb_packages:
+#    name: DEB packages
+#    runs-on: ubuntu-latest
+#    needs:
+#      - build_ubuntu
+#    strategy:
+#      matrix:
+#        version: ['18.04', '20.04']
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#      - name: Download GUI
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_${{ matrix.version }}
+#          path: gui
+#        continue-on-error: true
+#      - name: Download CLI
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_${{ matrix.version }}_cli_only
+#          path: cli
+#        continue-on-error: true
+#      - name: Create Package
+#        run: |
+#          mkdir -p debian/usr/share/WebcamDownloader
+#          mv gui/WebcamDownloader debian/usr/share/WebcamDownloader
+#          mv cli/WebcamDownloader debian/usr/share/WebcamDownloader/webcam-downloader-cli
+#          chmod +x debian/usr/share/WebcamDownloader/*
+#          chmod +x debian/usr/share/applications/*
+#          chmod +x debian/usr/local/bin/*
+#          cp icon.png debian/usr/share/WebcamDownloader
+#          mv debian WebcamDownloader
+#          dpkg-deb --build --root-owner-group WebcamDownloader
+#          mv WebcamDownloader.deb WebcamDownloader_${{ matrix.version }}.deb
+#      - name: Create Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: WebcamDownloader_${{ matrix.version }}.deb
+#          path: WebcamDownloader_${{ matrix.version }}.deb
+#          if-no-files-found: error
+#          retention-days: 7
 
   release:
     name: Release
     needs:
       - build_windows
-      - build_ubuntu
-      - create_deb_packages
+#      - build_ubuntu
+#      - create_deb_packages
     runs-on: ubuntu-latest
     steps:
       - name: Download Windows
@@ -139,44 +139,44 @@ jobs:
         with:
           name: WebcamDownloaderWindows
         continue-on-error: true
-      - name: Download Ubuntu 18.04 (GUI)
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_18.04
-          path: 18.04_gui
-        continue-on-error: true
-      - name: Download Ubuntu 18.04 (CLI)
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_18.04_cli_only
-          path: 18.04_cli
-      - name: Download Ubuntu 18.04 (DEB)
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloader_18.04.deb
-        continue-on-error: true
-      - name: Download Ubuntu 20.04 (GUI)
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_20.04
-          path: 20.04_gui
-        continue-on-error: true
-      - name: Download Ubuntu 20.04 (CLI)
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_20.04_cli_only
-          path: 20.04_cli
-        continue-on-error: true
-      - name: Download Ubuntu 20.04 (DEB)
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloader_20.04.deb
-      - name: Rename Files
-        run: |
-          mv 18.04_gui/WebcamDownloader WebcamDownloaderLinux_18.04_gui
-          mv 20.04_gui/WebcamDownloader WebcamDownloaderLinux_20.04_gui
-          mv 18.04_cli/WebcamDownloader WebcamDownloaderLinux_18.04_cli
-          mv 20.04_cli/WebcamDownloader WebcamDownloaderLinux_20.04_cli
+#      - name: Download Ubuntu 18.04 (GUI)
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_18.04
+#          path: 18.04_gui
+#        continue-on-error: true
+#      - name: Download Ubuntu 18.04 (CLI)
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_18.04_cli_only
+#          path: 18.04_cli
+#      - name: Download Ubuntu 18.04 (DEB)
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloader_18.04.deb
+#        continue-on-error: true
+#      - name: Download Ubuntu 20.04 (GUI)
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_20.04
+#          path: 20.04_gui
+#        continue-on-error: true
+#      - name: Download Ubuntu 20.04 (CLI)
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_20.04_cli_only
+#          path: 20.04_cli
+#        continue-on-error: true
+#      - name: Download Ubuntu 20.04 (DEB)
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloader_20.04.deb
+#      - name: Rename Files
+#        run: |
+#          mv 18.04_gui/WebcamDownloader WebcamDownloaderLinux_18.04_gui
+#          mv 20.04_gui/WebcamDownloader WebcamDownloaderLinux_20.04_gui
+#          mv 18.04_cli/WebcamDownloader WebcamDownloaderLinux_18.04_cli
+#          mv 20.04_cli/WebcamDownloader WebcamDownloaderLinux_20.04_cli
       - name: Extract Version Name
         id: extract_name
         uses: actions/github-script@v7
@@ -194,53 +194,53 @@ jobs:
           prerelease: false
           body: |
             For Windows download either `WebcamDownloaderSetup.exe` (installer) or `WebcamDownloader.zip` (non installable version) from assets below.
-
-            For Ubuntu download `WebcamDownloader_18.04` or `WebcamDownloader_20.04` based on your distribution.
-            You can download a version with graphical interface or without it.
-
-            You can also use a docker image `webcamdownloader/webcam-downloader`.
+#
+#            For Ubuntu download `WebcamDownloader_18.04` or `WebcamDownloader_20.04` based on your distribution.
+#            You can download a version with graphical interface or without it.
+#
+#            You can also use a docker image `webcamdownloader/webcam-downloader`.
           files: |
             WebcamDownloaderSetup.exe
             WebcamDownloader.zip
-            WebcamDownloaderLinux_18.04_gui
-            WebcamDownloaderLinux_18.04_cli
-            WebcamDownloaderLinux_20.04_gui
-            WebcamDownloaderLinux_20.04_cli
-            WebcamDownloader_18.04.deb
-            WebcamDownloader_20.04.deb
-  docker:
-    name: Create Docker
-    needs:
-      - build_ubuntu
-    runs-on: ubuntu-latest
-    steps:
-      - name: Extract Version Name
-        id: extract_name
-        uses: actions/github-script@v7
-        with:
-          result-encoding: string
-          script: |
-            return context.payload.ref.replace(/refs\/tags\/v/, '');
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Download Binary
-        uses: actions/download-artifact@v4
-        with:
-          name: WebcamDownloaderLinux_20.04_cli_only
-      - name: Move Binary
-        run: mv WebcamDownloader docker/WebcamDownloaderLinux_20.04_cli
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: webcamdownloader
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Build and Push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: |
-            webcamdownloader/webcam-downloader:latest
-            webcamdownloader/webcam-downloader:${{ steps.extract_name.outputs.result }}
-          context: docker
+#            WebcamDownloaderLinux_18.04_gui
+#            WebcamDownloaderLinux_18.04_cli
+#            WebcamDownloaderLinux_20.04_gui
+#            WebcamDownloaderLinux_20.04_cli
+#            WebcamDownloader_18.04.deb
+#            WebcamDownloader_20.04.deb
+#  docker:
+#    name: Create Docker
+#    needs:
+#      - build_ubuntu
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Extract Version Name
+#        id: extract_name
+#        uses: actions/github-script@v7
+#        with:
+#          result-encoding: string
+#          script: |
+#            return context.payload.ref.replace(/refs\/tags\/v/, '');
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#        with:
+#          submodules: recursive
+#      - name: Download Binary
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: WebcamDownloaderLinux_20.04_cli_only
+#      - name: Move Binary
+#        run: mv WebcamDownloader docker/WebcamDownloaderLinux_20.04_cli
+#      - name: Login to DockerHub
+#        uses: docker/login-action@v3
+#        with:
+#          username: webcamdownloader
+#          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+#      - name: Build and Push
+#        uses: docker/build-push-action@v6
+#        with:
+#          push: true
+#          tags: |
+#            webcamdownloader/webcam-downloader:latest
+#            webcamdownloader/webcam-downloader:${{ steps.extract_name.outputs.result }}
+#          context: docker
