@@ -43,7 +43,7 @@ jobs:
 
   build_ubuntu:
     name: Ubuntu
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         imageVersion: [ '5.12', '5.15.1' ]
